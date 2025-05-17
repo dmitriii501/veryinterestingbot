@@ -1,7 +1,7 @@
-# bot/handlers.py
+# bot/handlers/handlers.py
 
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
-from ai_module.nlu import get_model_response, parse_model_response
+from ai_module.nlu import get_model_response, parse_model_response  # ✅ Теперь работает!
 
 async def start(update, context):
     await update.message.reply_text("Бот запущен!")
@@ -19,7 +19,7 @@ async def handle_message(update, context):
 def start_bot():
     from bot.config import settings
 
-    app = ApplicationBuilder().token(settings.bot_token).build()
+    app = ApplicationBuilder().token(settings.BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     print("Бот запущен...")
