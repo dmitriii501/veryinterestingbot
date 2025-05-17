@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings
 load_dotenv()
 
 class Settings(BaseSettings):
-    bot_token: str = Field(..., env='BOT_TOKEN')
+    BOT_TOKEN: str = Field(..., env='BOT_TOKEN')
 
     allowed_user_ids_str: str = Field("", env='ALLOWED_USER_IDS')
 
