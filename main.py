@@ -31,7 +31,7 @@ async  def main():
 
     if app_settings.ALLOWED_USER_IDS:
 
-        logging.INFO(f"Авторизация по ID включена. Разрешенные ID: {app_settings.ALLOWED_USER_IDS}")
+        logging.info(f"Авторизация по ID включена. Разрешенные ID: {app_settings.ALLOWED_USER_IDS}")
 
         dp.update.outer_middleware.register(AuthMiddleware(allowed_ids=app_settings.ALLOWED_USER_IDS))
 

@@ -1,6 +1,7 @@
 from aiogram import Router, F
 from aiogram.filters import CommandStart
 from aiogram.types import Message
+from ..Keyboards import get_main_menu_keyboard
 
 router = Router(name="Команда старт")
 
@@ -22,4 +23,7 @@ async def cmd_start(message: Message):
         f"Для получения списка команд введите /help."
     )
 
-    await message.answer(greeting_text)
+    await message.answer(
+        greeting_text,
+        reply_markup=get_main_menu_keyboard()
+    )

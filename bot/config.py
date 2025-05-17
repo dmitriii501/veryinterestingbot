@@ -8,7 +8,7 @@ load_dotenv()
 class Settings(BaseSettings):
     BOT_TOKEN: str = Field(..., env='BOT_TOKEN')
 
-    allowed_user_ids_str: str = Field("", env='ALLOWED_USER_IDS')
+    ALLOWED_USER_IDS: str = Field("", env='ALLOWED_USER_IDS')
 
     @property
     def ALLOWED_USER_IDS(self) -> set[int]:
