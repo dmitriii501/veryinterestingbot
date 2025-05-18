@@ -4,7 +4,8 @@ from aiogram.filters import Command
 import json
 import re
 import logging
-from typing import Optional
+from typing import Optional, List, Dict, Any
+from datetime import datetime
 
 # Предполагается, что process_user_query находится в ai_module/nlu.py
 from ai_module.nlu import process_user_query  # Импортируем функцию process_user_query
@@ -21,39 +22,88 @@ def escape_markdown_v2(text: str) -> str:
     escape_chars = r'_*[]()~`>#+-=|{}.!'
     return ''.join(f'\\{c}' if c in escape_chars else c for c in text)
 
-async def find_employee_phone(bot: Bot, employee_name: str) -> Optional[str]:
+def format_employee_info(employee: Dict[str, Any], info_type: Optional[str] = None) -> str:
     """
-    Ищет номер телефона сотрудника в базе данных Supabase.
+    Форматирует информацию о сотруднике в зависимости от запрошенного типа информации.
+    
+    Args:
+        employee: Словарь с данными сотрудника
+        info_type: Тип запрашиваемой информации (education, hire_date, phone_number, job_title)
+        
+    Returns:
+        Отформатированная строка с информацией
+    """
+    if info_type:
+        if info_type == "education":
+            return f"Образование сотрудника {employee['name']}: {employee.get('education', 'не указано')}"
+        elif info_type == "hire_date":
+            hire_date = employee.get('hire_date')
+            if hire_date:
+                date_obj = datetime.strptime(hire_date, "%Y-%m-%d")
+                formatted_date = date_obj.strftime("%d.%m.%Y")
+                return f"Дата приема на работу {employee['name']}: {formatted_date}"
+            return f"Дата приема на работу {employee['name']}: не указана"
+        elif info_type == "job_title":
+            return f"Должность сотрудника {employee['name']}: {employee.get('job_title', 'не указана')}"
+        elif info_type == "phone_number":
+            phone = str(employee.get('phone_number', ''))
+            if phone:
+                return f"Телефон сотрудника {employee['name']}: +{phone[:1]} ({phone[1:4]}) {phone[4:7]}-{phone[7:9]}-{phone[9:]}"
+            return f"Телефон сотрудника {employee['name']}: не указан"
+    
+    # Если тип информации не указан, возвращаем общую информацию
+    info = [f"Информация о сотруднике {employee['name']}:"]
+    if employee.get('job_title'):
+        info.append(f"Должность: {employee['job_title']}")
+    if employee.get('department'):
+        info.append(f"Отдел: {employee['department']}")
+    if employee.get('hire_date'):
+        date_obj = datetime.strptime(employee['hire_date'], "%Y-%m-%d")
+        info.append(f"Дата приема: {date_obj.strftime('%d.%m.%Y')}")
+    if employee.get('education'):
+        info.append(f"Образование: {employee['education']}")
+    if employee.get('phone_number'):
+        phone = str(employee['phone_number'])
+        info.append(f"Телефон: +{phone[:1]} ({phone[1:4]}) {phone[4:7]}-{phone[7:9]}-{phone[9:]}")
+    
+    return "\n".join(info)
+
+async def find_employees(bot: Bot, query: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Ищет сотрудников в базе данных по различным критериям.
     
     Args:
         bot: Экземпляр бота с подключением к Supabase
-        employee_name: Имя сотрудника для поиска
+        query: Словарь с параметрами поиска
         
     Returns:
-        Строка с отформатированным номером телефона или None, если не найден
+        Список найденных сотрудников
     """
     try:
         if not bot.supabase_client:
             logging.error("Supabase client not configured")
-            return None
+            return []
             
-        # Выполняем поиск по имени (используем ILIKE для регистронезависимого поиска)
-        response = bot.supabase_client.table('employees').select('name, phone_number').ilike('name', f'%{employee_name}%').execute()
+        supabase_query = bot.supabase_client.table('employees').select('*')
         
-        if not response.data:
-            return None
+        # Поиск по имени
+        if query.get('entities', {}).get('employee_name'):
+            supabase_query = supabase_query.ilike('name', f"%{query['entities']['employee_name']}%")
             
-        # Если найдено несколько сотрудников, берем первого
-        employee = response.data[0]
-        if employee.get('phone_number'):
-            # Форматируем номер телефона для вывода
-            phone = str(employee['phone_number'])
-            return f"+{phone[:1]} ({phone[1:4]}) {phone[4:7]}-{phone[7:9]}-{phone[9:]}"
-        return None
+        # Поиск по должности
+        if query.get('entities', {}).get('position'):
+            supabase_query = supabase_query.ilike('job_title', f"%{query['entities']['position']}%")
+            
+        # Поиск по отделу
+        if query.get('entities', {}).get('department'):
+            supabase_query = supabase_query.ilike('department', f"%{query['entities']['department']}%")
+            
+        response = supabase_query.execute()
+        return response.data if response.data else []
         
     except Exception as e:
-        logging.error(f"Error querying Supabase for employee phone: {e}")
-        return None
+        logging.error(f"Error querying Supabase for employees: {e}")
+        return []
 
 @router.message(Command("nlu"))
 async def nlu_command_handler(message: types.Message):
@@ -61,62 +111,59 @@ async def nlu_command_handler(message: types.Message):
     Этот обработчик будет вызываться, когда пользователь отправляет команду /nlu.
     Он получает текст сообщения пользователя и отправляет его на обработку в NLU модуль.
     """
-    # Extract the actual query (remove the /nlu command)
     command_parts = message.text.split(maxsplit=1)
     if len(command_parts) < 2:
         await message.answer(
             "Пожалуйста, укажите текст запроса после команды /nlu\n"
-            "Например: /nlu кто из разработки работает сегодня?"
+            "Например:\n"
+            "- /nlu какое образование у Виктора Ивановича\n"
+            "- /nlu кто работает юристом\n"
+            "- /nlu когда приняли на работу Анну\n"
+            "- /nlu дай информацию о Петре Васильевиче"
         )
         return
 
     user_query = command_parts[1]
-    
-    # Process the query through NLU
     result = await process_user_query(user_query)
     
     if result:
         try:
-            # Format the response nicely for debug output
-            formatted_json = json.dumps(result, ensure_ascii=False, indent=2)
+            # Поиск сотрудников в зависимости от интента
+            employees = await find_employees(message.bot, result)
             
-            # If intent is find_employee and we have an employee name, try to find their phone
-            if result.get('intent') == 'find_employee' and result.get('entities', {}).get('employee_name'):
-                employee_name = result['entities']['employee_name']
-                phone_number = await find_employee_phone(message.bot, employee_name)
+            if not employees:
+                await message.answer("Извините, не удалось найти сотрудников по вашему запросу.")
+                return
                 
-                if phone_number:
-                    await message.answer(
-                        f"Телефон сотрудника {employee_name}:\n{phone_number}"
-                    )
+            # Формируем ответ в зависимости от интента и найденных сотрудников
+            if result['intent'] in ['find_employee', 'find_by_position', 'find_by_department']:
+                info_type = result.get('entities', {}).get('info_type')
+                
+                if len(employees) == 1:
+                    # Если найден один сотрудник, показываем подробную информацию
+                    response = format_employee_info(employees[0], info_type)
+                    await message.answer(response)
                 else:
-                    await message.answer(
-                        f"Извините, не удалось найти номер телефона для сотрудника {employee_name}"
-                    )
-                    
-                # Also show the NLU debug info
-                escaped_lines = [escape_markdown_v2(line) for line in formatted_json.split('\n')]
-                escaped_response = '\n'.join(escaped_lines)
-                debug_text = f"Детали анализа запроса:\n```json\n{escaped_response}\n```"
+                    # Если найдено несколько сотрудников, показываем список
+                    response = "Найденные сотрудники:\n\n"
+                    for emp in employees:
+                        response += f"• {emp['name']}"
+                        if emp.get('job_title'):
+                            response += f" - {emp['job_title']}"
+                        response += "\n"
+                    await message.answer(response.strip())
+            
+            # Показываем результат NLU анализа для отладки
+            formatted_json = json.dumps(result, ensure_ascii=False, indent=2)
+            escaped_lines = [escape_markdown_v2(line) for line in formatted_json.split('\n')]
+            escaped_response = '\n'.join(escaped_lines)
+            debug_text = f"Детали анализа запроса:\n```json\n{escaped_response}\n```"
+            
+            try:
+                await message.answer(debug_text, parse_mode="MarkdownV2")
+            except Exception as e:
+                logging.error(f"Failed to send debug info: {e}")
                 
-                try:
-                    await message.answer(debug_text, parse_mode="MarkdownV2")
-                except Exception as e:
-                    logging.error(f"Failed to send debug info: {e}")
-            else:
-                # For other intents, just show the NLU analysis
-                escaped_lines = [escape_markdown_v2(line) for line in formatted_json.split('\n')]
-                escaped_response = '\n'.join(escaped_lines)
-                response_text = f"Результат анализа:\n```json\n{escaped_response}\n```"
-                
-                try:
-                    await message.answer(response_text, parse_mode="MarkdownV2")
-                except Exception as e:
-                    logging.error(f"Failed to send formatted message: {e}")
-                    await message.answer(
-                        f"Результат анализа:\n{formatted_json}",
-                        parse_mode=None
-                    )
         except Exception as e:
             logging.error(f"Error processing response: {e}")
             await message.answer(
