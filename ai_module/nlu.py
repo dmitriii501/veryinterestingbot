@@ -1,87 +1,50 @@
-import requests
 import json
-import asyncio
-from bot.config import app_settings  # Предполагается, что у вас есть этот файл
+import dashscope
+from bot.config import app_settings
 
 # Получаем API-ключ из конфигурации
-API_KEY = app_settings.AI_API_KEY
-MODEL = "google/gemma-3-1b-it:free"  # Или другая модель на ваш выбор
+API_KEY = app_settings.DASHSCOPE_API_KEY
 
 
-async def chat_with_system_prompt(
-    user_message: str, system_prompt: str
-) -> str | None:
+async def process_user_query(user_query: str, system_prompt: str) -> str | None:
     """
-    Отправляет асинхронный запрос в OpenRouter с системным промптом и возвращает ответ.
-
-    Args:
-        user_message: Сообщение пользователя (str).
-        system_prompt: Системный промпт для настройки поведения ИИ (str).
-
-    Returns:
-        Ответ от OpenRouter (str) в случае успеха, None в случае ошибки.
-    """
-    headers = {
-        "Authorization": f"Bearer {API_KEY}",
-        "Content-Type": "application/json",
-    }
-    messages = [
-        {"role": "system", "content": system_prompt},  # Системный промпт
-        {"role": "user", "content": user_message},  # Сообщение пользователя
-    ]
-    payload = {
-        "model": MODEL,
-        "messages": messages,
-        "stream": False,
-    }
-
-    try:
-        loop = asyncio.get_event_loop()
-        response = await loop.run_in_executor(
-            None,  # Используем ThreadPoolExecutor по умолчанию для выполнения блокирующего вызова
-            lambda: requests.post(
-                "https://openrouter.ai/api/v1/chat/completions",
-                headers=headers,
-                json=payload,
-            ),
-        )
-        response.raise_for_status()  # Вызываем исключение для статус-кодов 4xx и 5xx
-
-        response_json = response.json()
-        if response_json and response_json["choices"]:
-            content = response_json["choices"][0]["message"]["content"]
-            return content.replace("<think>", "").replace(
-                "</think>", ""
-            ).strip()
-        else:
-            print("Предупреждение: OpenRouter вернул пустой ответ.")
-            return None  # Возвращаем None при пустом ответе
-    except requests.exceptions.RequestException as e:
-        print(f"Ошибка при запросе к OpenRouter: {e}")
-        return None  # Возвращаем None при ошибке запроса
-    except json.JSONDecodeError:
-        print("Ошибка при обработке ответа: Некорректный JSON от OpenRouter")
-        return None  # Возвращаем None при ошибке JSON
-    except Exception as e:
-        print(f"Непредвиденная ошибка: {e}")
-        return None  # Возвращаем None при любой другой ошибке
-
-
-async def process_user_query(
-    user_query: str, system_prompt: str
-) -> str | None:
-    """
-    Отправляет запрос пользователя в OpenRouter с системным промптом и возвращает ответ.
+    Отправляет запрос пользователя в DashScope и возвращает ответ.
 
     Args:
         user_query: Запрос пользователя (str).
         system_prompt: Системный промпт для настройки поведения ИИ (str).
 
     Returns:
-        Ответ от OpenRouter (str) в случае успеха, None в случае ошибки.
+        Ответ от DashScope (str) в случае успеха, None в случае ошибки.
     """
-    response = await chat_with_system_prompt(user_query, system_prompt)
-    return response
+    if not API_KEY:
+        print("ОШИБКА: API ключ DashScope не настроен")
+        return None
+
+    try:
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_query}
+        ]
+
+        response = dashscope.Generation.call(
+            model='qwen-max',
+            messages=messages,
+            api_key=API_KEY,
+            result_format='message',
+            max_tokens=1000,
+            temperature=0.1
+        )
+        
+        if response.status_code == 200:
+            return response.output.choices[0].message.content.strip()
+        else:
+            print(f"Ошибка DashScope API: {response.code} - {response.message}")
+            return None
+
+    except Exception as e:
+        print(f"Ошибка при обработке запроса: {e}")
+        return None
 
 
 async def main():
