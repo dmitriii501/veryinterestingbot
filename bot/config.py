@@ -2,19 +2,21 @@ import os
 from dotenv import load_dotenv
 from pydantic import Field
 from pydantic_settings import BaseSettings
+from typing import List, Optional
 
 load_dotenv()
 
 class Settings(BaseSettings):
-    BOT_TOKEN: str = Field(..., env='BOT_TOKEN')
+    # Telegram Bot settings
+    BOT_TOKEN: str
+    ALLOWED_USER_IDS: Optional[List[int]] = None
 
-    ALLOWED_USER_IDS: str = Field("", env='ALLOWED_USER_IDS')
+    # Supabase settings
+    SUPABASE_URL: str
+    SUPABASE_KEY: str
 
-    AI_API_KEY: str = Field(..., env = "AI_API_KEY")
-
-    SUPABASE_URL: str = Field(..., env = "SUPABASE_URL")
-    SUPABASE_KEY: str = Field(..., env = "SUPABASE_KEY")
-
+    # AI settings
+    DASHSCOPE_API_KEY: Optional[str] = None
 
     @property
     def ALLOWED_USER_IDS(self) -> set[int]:
@@ -29,7 +31,6 @@ class Settings(BaseSettings):
             return set()
 
     class Config:
-
         env_file = ".env"
         env_file_encoding = 'utf-8'
         extra = 'ignore'

@@ -3,15 +3,17 @@ import json
 import logging
 from typing import Dict, Callable, Awaitable
 
-from aiogram import Router, types, Bot
+from aiogram import Router, types, Bot, F
 from aiogram.filters import Command
 from pydantic import ValidationError
 from supabase import Client
+import dashscope
+from bot.config import app_settings
 
 from bot.utils.database import execute_supabase_query
 from bot.utils.ai_request_models import AIRequest, AIRequestEntities
 
-router = Router(name="ai_intent_processing")
+router = Router(name="ai_intent")
 logger = logging.getLogger(__name__)
 
 
@@ -143,3 +145,192 @@ async def process_ai_request(message: types.Message, bot: Bot):
     response_text = await handler_function(entities_to_pass, supabase)
 
     await message.answer(response_text)
+
+
+async def classify_intent(text: str) -> dict:
+    """
+    Классифицирует намерение пользователя с помощью AI.
+    """
+    if not app_settings.DASHSCOPE_API_KEY:
+        return {"intent": "unknown", "confidence": 0}
+
+    prompt = f"""
+    Classify the following user message into one of these intents:
+    - search_employee (поиск сотрудника)
+    - search_event (поиск мероприятия)
+    - search_task (поиск задачи)
+    - create_event (создание мероприятия)
+    - create_task (создание задачи)
+    - update_status (обновление статуса)
+    - unknown (неизвестное намерение)
+
+    Message: "{text}"
+
+    Return ONLY a JSON object with 'intent' and 'confidence' fields.
+    Example: {{"intent": "search_employee", "confidence": 0.95}}
+    """
+
+    try:
+        response = dashscope.Generation.call(
+            model='qwen-max',
+            prompt=prompt,
+            api_key=app_settings.DASHSCOPE_API_KEY,
+            result_format='message',
+            max_tokens=100,
+            temperature=0.1
+        )
+        
+        if response.status_code == 200:
+            return eval(response.output.choices[0].message.content.strip())
+        return {"intent": "unknown", "confidence": 0}
+    except Exception as e:
+        print(f"Error classifying intent: {e}")
+        return {"intent": "unknown", "confidence": 0}
+
+
+async def extract_entities(text: str, intent: str) -> dict:
+    """
+    Извлекает сущности из текста пользователя в зависимости от намерения.
+    """
+    if not app_settings.DASHSCOPE_API_KEY:
+        return {}
+
+    entity_types = {
+        "search_employee": ["name", "department", "position", "skills"],
+        "search_event": ["title", "date", "type"],
+        "search_task": ["title", "status", "priority", "project"],
+        "create_event": ["title", "description", "date", "time", "location", "type"],
+        "create_task": ["title", "description", "assignee", "due_date", "priority", "project"],
+        "update_status": ["entity_type", "entity_id", "new_status"]
+    }
+
+    if intent not in entity_types:
+        return {}
+
+    prompt = f"""
+    Extract the following entities from the text: {entity_types[intent]}
+    
+    Text: "{text}"
+    
+    Return ONLY a JSON object where keys are entity names and values are extracted values.
+    If an entity is not found, don't include it in the response.
+    Example: {{"name": "John", "department": "IT"}}
+    """
+
+    try:
+        response = dashscope.Generation.call(
+            model='qwen-max',
+            prompt=prompt,
+            api_key=app_settings.DASHSCOPE_API_KEY,
+            result_format='message',
+            max_tokens=200,
+            temperature=0.1
+        )
+        
+        if response.status_code == 200:
+            return eval(response.output.choices[0].message.content.strip())
+        return {}
+    except Exception as e:
+        print(f"Error extracting entities: {e}")
+        return {}
+
+
+@router.message(F.text)
+async def process_message(message: types.Message):
+    text = message.text
+    
+    # Определяем намерение пользователя
+    intent_data = await classify_intent(text)
+    intent = intent_data["intent"]
+    confidence = intent_data["confidence"]
+    
+    if intent == "unknown" or confidence < 0.7:
+        await message.answer(
+            "🤔 Извините, я не совсем понял ваш запрос. Попробуйте переформулировать."
+        )
+        return
+    
+    # Извлекаем сущности из текста
+    entities = await extract_entities(text, intent)
+    
+    # В зависимости от намерения и сущностей формируем соответствующий запрос
+    if intent.startswith("search_"):
+        # Перенаправляем на поиск
+        router_name = "search" if entities else "ai_db_query"
+        await message.bot.get_router(router_name).process_message(message)
+    
+    elif intent == "create_event":
+        if all(k in entities for k in ["title", "date"]):
+            await create_event(message, entities)
+        else:
+            await message.answer(
+                "📅 Для создания мероприятия мне нужны хотя бы название и дата.\n"
+                "Например: 'Создай встречу команды разработки на завтра в 15:00'"
+            )
+    
+    elif intent == "create_task":
+        if all(k in entities for k in ["title", "due_date"]):
+            await create_task(message, entities)
+        else:
+            await message.answer(
+                "📋 Для создания задачи мне нужны хотя бы название и срок.\n"
+                "Например: 'Создай задачу подготовить отчет до пятницы'"
+            )
+    
+    elif intent == "update_status":
+        if all(k in entities for k in ["entity_type", "entity_id", "new_status"]):
+            await update_status(message, entities)
+        else:
+            await message.answer(
+                "❌ Не хватает информации для обновления статуса.\n"
+                "Например: 'Отметь задачу 123 как выполненную'"
+            )
+
+
+async def create_event(message: types.Message, entities: dict):
+    try:
+        result = await message.bot.supabase_client.table("events").insert({
+            "title": entities["title"],
+            "description": entities.get("description", ""),
+            "date": entities["date"],
+            "time": entities.get("time"),
+            "location": entities.get("location"),
+            "organizer_id": message.from_user.id,
+            "type": entities.get("type", "other")
+        }).execute()
+        
+        await message.answer("✅ Мероприятие успешно создано!")
+    except Exception as e:
+        await message.answer("❌ Не удалось создать мероприятие. Попробуйте позже.")
+        print(f"Error creating event: {e}")
+
+
+async def create_task(message: types.Message, entities: dict):
+    try:
+        result = await message.bot.supabase_client.table("tasks").insert({
+            "title": entities["title"],
+            "description": entities.get("description", ""),
+            "assignee_id": message.from_user.id,  # По умолчанию назначаем на создателя
+            "due_date": entities["due_date"],
+            "status": "pending",
+            "priority": entities.get("priority", "medium"),
+            "project": entities.get("project")
+        }).execute()
+        
+        await message.answer("✅ Задача успешно создана!")
+    except Exception as e:
+        await message.answer("❌ Не удалось создать задачу. Попробуйте позже.")
+        print(f"Error creating task: {e}")
+
+
+async def update_status(message: types.Message, entities: dict):
+    try:
+        table = entities["entity_type"] + "s"  # events или tasks
+        result = await message.bot.supabase_client.table(table).update({
+            "status": entities["new_status"]
+        }).eq("id", entities["entity_id"]).execute()
+        
+        await message.answer("✅ Статус успешно обновлен!")
+    except Exception as e:
+        await message.answer("❌ Не удалось обновить статус. Попробуйте позже.")
+        print(f"Error updating status: {e}")
