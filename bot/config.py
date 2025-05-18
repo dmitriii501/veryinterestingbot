@@ -10,12 +10,16 @@ class Settings(BaseSettings):
 
     ALLOWED_USER_IDS: str = Field("", env='ALLOWED_USER_IDS')
 
+
+    SUPABASE_URL: str = Field(..., env = "SUPABASE_URL")
+    SUPABASE_KEY: str = Field(..., env = "SUPABASE_KEY")
+
+
     @property
     def ALLOWED_USER_IDS(self) -> set[int]:
         ids_str = self.allowed_user_ids_str.strip()
         if not ids_str:
             return set()
-
         try:
             return {int(uid.strip()) for uid in ids_str.split(',') if uid.strip().isdigit()}
         except ValueError:

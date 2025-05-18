@@ -9,11 +9,14 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.client.default import DefaultBotProperties
 
+from supabase import create_client, Client
+
 from bot.config import app_settings
 
 from bot.handlers import start
 from bot.handlers import help as help_command
 from bot.handlers import ai_query as ai_query_handler
+from bot.handlers import employees_handler
 
 from bot.middlewares.auth import AuthMiddleware
 
@@ -39,6 +42,20 @@ async  def main():
 
         logging.warning("ALLOWED_USER_IDS не настроен или пуст. Авторизация по ID отключена.")
 
+    try:
+        if not app_settings.SUPABASE_URL or not app_settings.SUPABASE_KEY:
+            logging.error("SUPABASE_URL и/или SUPABASE_KEY не установлены в конфигурации.")
+            bot.supabase_client = None
+        else:
+            from supabase import create_client, Client
+            supabase_client_instance: Client = create_client(app_settings.SUPABASE_URL, app_settings.SUPABASE_KEY)
+            logging.info("Успешно подключились к Supabase!")
+            bot.supabase_client = supabase_client_instance
+    except Exception as e:
+        logging.error(f"Ошибка подключения к Supabase: {e}", exc_info=True)
+        bot.supabase_client = None
+
+
     logging.info("Регистрация хендлеров...")
     if hasattr(start, 'router'):
         dp.include_router(start.router)
@@ -57,6 +74,12 @@ async  def main():
         logging.info(f"Роутер '{ai_query_handler.router.name or 'ai_query_handler'}' зарегистрирован.")
     else:
         logging.error("Роутер из bot.handlers.ai_query не найден или не имеет атрибута 'router'.")
+
+    if hasattr(employees_handler, 'router'):  # <--- ИЗМЕНИТЕ НА ИМЯ ВАШЕГО ФАЙЛА
+        dp.include_router(employees_handler.router)
+        logging.info(f"Роутер '{employees_handler.router.name or 'employees_handler'}' зарегистрирован.")
+    else:
+        logging.error("Роутер из bot.handlers.employees_handler не найден или не имеет атрибута 'router'.")
 
     await bot.delete_webhook(drop_pending_updates=True)
     logging.info("Начинаем поллинг...")
