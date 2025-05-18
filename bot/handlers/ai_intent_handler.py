@@ -13,7 +13,7 @@ from bot.config import app_settings
 from bot.utils.database import execute_supabase_query
 from bot.utils.ai_request_models import AIRequest, AIRequestEntities
 
-from ai_module.nlu import NLUProcessor
+from ai_module.nlu import NLUProcessor, process_user_query
 from ai_module.response_generator import ResponseGenerator
 
 router = Router(name="ai_intent_handler")
@@ -241,50 +241,49 @@ async def extract_entities(text: str, intent: str) -> dict:
         return {}
 
 
-@router.message(F.text)
-async def handle_user_message(message: types.Message):
+@router.message(F.text & ~Command(commands=["start", "help", "nlu"]))
+async def handle_user_message(message: types.Message, bot: Bot):
     """
     Process user messages through the two-stage AI pipeline:
     1. NLU processing to extract intent and entities
-    2. Response generation based on the extracted information
+    2. Response generation based on the extracted information and database data
     """
-    try:
-        # Get bot instance to access Supabase client
-        bot = message.bot
-        if not bot.supabase_client:
-            await message.answer("Извините, но сервис временно недоступен. Попробуйте позже.")
-            logger.error("Supabase client not initialized")
-            return
+    if not hasattr(bot, 'supabase_client') or not bot.supabase_client:
+        logger.error("Supabase client not configured")
+        await message.answer("Извините, возникла ошибка конфигурации. Обратитесь к администратору.")
+        return
 
-        # Initialize response generator with Supabase client
-        response_generator = ResponseGenerator(bot.supabase_client)
-
-        # Stage 1: NLU Processing
-        nlu_result = await nlu_processor.process_query(message.text)
-        if not nlu_result:
-            await message.answer(
-                "Извините, но я не смог правильно понять ваш запрос. "
-                "Пожалуйста, попробуйте переформулировать."
-            )
-            return
-
-        logger.info(f"NLU Result for message '{message.text}': {nlu_result}")
-
-        # Stage 2: Response Generation
-        response = await response_generator.generate_response(nlu_result)
-        if not response:
-            await message.answer(
-                "Извините, но произошла ошибка при обработке вашего запроса. "
-                "Пожалуйста, попробуйте еще раз позже."
-            )
-            return
-
-        await message.answer(response)
-
-    except Exception as e:
-        logger.error(f"Error processing message: {e}", exc_info=True)
+    # Stage 1: NLU Processing
+    logger.info(f"Processing message: {message.text}")
+    nlu_result = await process_user_query(message.text)
+    
+    if not nlu_result:
         await message.answer(
-            "Произошла непредвиденная ошибка. Пожалуйста, попробуйте позже."
+            "Извините, я не смог правильно понять ваш запрос. "
+            "Попробуйте сформулировать его иначе."
+        )
+        return
+
+    # Log NLU result
+    logger.info(f"NLU Result: {json.dumps(nlu_result, ensure_ascii=False)}")
+
+    # Stage 2: Response Generation
+    try:
+        response_generator = ResponseGenerator(bot.supabase_client)
+        response = await response_generator.generate_response(nlu_result)
+        
+        if response:
+            await message.answer(response)
+        else:
+            await message.answer(
+                "Извините, произошла ошибка при обработке вашего запроса. "
+                "Попробуйте позже или обратитесь к администратору."
+            )
+    except Exception as e:
+        logger.error(f"Error in response generation: {e}")
+        await message.answer(
+            "Извините, произошла ошибка при формировании ответа. "
+            "Попробуйте позже или обратитесь к администратору."
         )
 
 

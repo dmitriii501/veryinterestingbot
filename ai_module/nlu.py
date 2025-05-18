@@ -4,23 +4,31 @@ import logging
 from typing import Dict, Any, Optional, Union
 from bot.config import app_settings
 from openai import OpenAI
+from openai.types.chat import ChatCompletion
+import asyncio
+from tenacity import retry, stop_after_attempt, wait_exponential
 
 logger = logging.getLogger(__name__)
 
 class NLUProcessor:
     def __init__(self):
-        self.api_key = app_settings.AI_API_KEY
-        self.base_url = "https://inference.api.nscale.com/v1"
-        self.model = "Qwen/Qwen3-235B-A22B"
+        self.api_key = app_settings.AI_API_KEY.get_secret_value()
+        self.base_url = app_settings.AI_BASE_URL
+        self.model = app_settings.AI_MODEL
         
         if not self.api_key:
             logger.error("AI_API_KEY not configured")
             raise ValueError("AI_API_KEY must be configured")
 
-        self.client = OpenAI(
-            api_key=self.api_key,
-            base_url=self.base_url
-        )
+        try:
+            self.client = OpenAI(
+                api_key=self.api_key,
+                base_url=self.base_url
+            )
+            logger.info("Successfully initialized OpenAI client")
+        except Exception as e:
+            logger.error(f"Failed to initialize OpenAI client: {e}")
+            raise
 
     def _get_system_prompt(self) -> str:
         """Returns the system prompt for NLU processing."""
@@ -90,6 +98,23 @@ class NLUProcessor:
             logger.error(f"Unexpected error validating NLU result: {e}")
             return None
 
+    @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
+    async def _call_ai_api(self, messages: list) -> Optional[ChatCompletion]:
+        """
+        Call the AI API with retry logic.
+        """
+        try:
+            response = await asyncio.to_thread(
+                self.client.chat.completions.create,
+                model=self.model,
+                messages=messages,
+                temperature=0.1  # Low temperature for more consistent results
+            )
+            return response
+        except Exception as e:
+            logger.error(f"Error calling AI API: {e}")
+            raise
+
     async def process_query(self, user_query: str) -> Optional[Dict[str, Any]]:
         """
         Process a user query through the NLU pipeline.
@@ -112,13 +137,10 @@ class NLUProcessor:
 
             logger.debug(f"Sending request to AI model with query: {user_query}")
             
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=messages
-            )
+            response = await self._call_ai_api(messages)
 
-            if not response.choices or not response.choices[0].message:
-                logger.warning("Empty response from AI model")
+            if not response or not response.choices or not response.choices[0].message:
+                logger.warning("Empty or invalid response from AI model")
                 return None
 
             result = response.choices[0].message.content.strip()
@@ -135,6 +157,35 @@ class NLUProcessor:
             logger.error(f"Error processing query: {e}")
             return None
 
+# Create a global instance of NLUProcessor
+_nlu_processor = None
+
+def get_nlu_processor() -> NLUProcessor:
+    """
+    Get or create a global NLUProcessor instance.
+    """
+    global _nlu_processor
+    if _nlu_processor is None:
+        _nlu_processor = NLUProcessor()
+    return _nlu_processor
+
+async def process_user_query(user_query: str, system_prompt: str = None) -> Optional[Dict[str, Any]]:
+    """
+    Process a user query through the NLU pipeline.
+    
+    Args:
+        user_query: The user's input text
+        system_prompt: Optional custom system prompt
+        
+    Returns:
+        Dict containing intent and entities or None if processing failed
+    """
+    try:
+        processor = get_nlu_processor()
+        return await processor.process_query(user_query)
+    except Exception as e:
+        logger.error(f"Error in process_user_query: {e}")
+        return None
 
 async def main():
     """
