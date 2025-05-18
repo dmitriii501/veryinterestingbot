@@ -7,7 +7,6 @@ from aiogram import Router, types, Bot, F
 from aiogram.filters import Command
 from pydantic import ValidationError
 from supabase import Client
-import dashscope
 from bot.config import app_settings
 
 from bot.utils.database import execute_supabase_query
@@ -153,94 +152,6 @@ async def process_ai_request(message: types.Message, bot: Bot):
     await message.answer(response_text)
 
 
-async def classify_intent(text: str) -> dict:
-    """
-    Классифицирует намерение пользователя с помощью AI.
-    """
-    if not app_settings.DASHSCOPE_API_KEY:
-        return {"intent": "unknown", "confidence": 0}
-
-    prompt = f"""
-    Classify the following user message into one of these intents:
-    - search_employee (поиск сотрудника)
-    - search_event (поиск мероприятия)
-    - search_task (поиск задачи)
-    - create_event (создание мероприятия)
-    - create_task (создание задачи)
-    - update_status (обновление статуса)
-    - unknown (неизвестное намерение)
-
-    Message: "{text}"
-
-    Return ONLY a JSON object with 'intent' and 'confidence' fields.
-    Example: {{"intent": "search_employee", "confidence": 0.95}}
-    """
-
-    try:
-        response = dashscope.Generation.call(
-            model='qwen-max',
-            prompt=prompt,
-            api_key=app_settings.DASHSCOPE_API_KEY,
-            result_format='message',
-            max_tokens=100,
-            temperature=0.1
-        )
-        
-        if response.status_code == 200:
-            return eval(response.output.choices[0].message.content.strip())
-        return {"intent": "unknown", "confidence": 0}
-    except Exception as e:
-        print(f"Error classifying intent: {e}")
-        return {"intent": "unknown", "confidence": 0}
-
-
-async def extract_entities(text: str, intent: str) -> dict:
-    """
-    Извлекает сущности из текста пользователя в зависимости от намерения.
-    """
-    if not app_settings.DASHSCOPE_API_KEY:
-        return {}
-
-    entity_types = {
-        "search_employee": ["name", "department", "position", "skills"],
-        "search_event": ["title", "date", "type"],
-        "search_task": ["title", "status", "priority", "project"],
-        "create_event": ["title", "description", "date", "time", "location", "type"],
-        "create_task": ["title", "description", "assignee", "due_date", "priority", "project"],
-        "update_status": ["entity_type", "entity_id", "new_status"]
-    }
-
-    if intent not in entity_types:
-        return {}
-
-    prompt = f"""
-    Extract the following entities from the text: {entity_types[intent]}
-    
-    Text: "{text}"
-    
-    Return ONLY a JSON object where keys are entity names and values are extracted values.
-    If an entity is not found, don't include it in the response.
-    Example: {{"name": "John", "department": "IT"}}
-    """
-
-    try:
-        response = dashscope.Generation.call(
-            model='qwen-max',
-            prompt=prompt,
-            api_key=app_settings.DASHSCOPE_API_KEY,
-            result_format='message',
-            max_tokens=200,
-            temperature=0.1
-        )
-        
-        if response.status_code == 200:
-            return eval(response.output.choices[0].message.content.strip())
-        return {}
-    except Exception as e:
-        print(f"Error extracting entities: {e}")
-        return {}
-
-
 @router.message(F.text & ~Command(commands=["start", "help", "nlu"]))
 async def handle_user_message(message: types.Message, bot: Bot):
     """
@@ -302,7 +213,7 @@ async def create_event(message: types.Message, entities: dict):
         await message.answer("✅ Мероприятие успешно создано!")
     except Exception as e:
         await message.answer("❌ Не удалось создать мероприятие. Попробуйте позже.")
-        print(f"Error creating event: {e}")
+        logger.error(f"Error creating event: {e}")
 
 
 async def create_task(message: types.Message, entities: dict):
@@ -320,7 +231,7 @@ async def create_task(message: types.Message, entities: dict):
         await message.answer("✅ Задача успешно создана!")
     except Exception as e:
         await message.answer("❌ Не удалось создать задачу. Попробуйте позже.")
-        print(f"Error creating task: {e}")
+        logger.error(f"Error creating task: {e}")
 
 
 async def update_status(message: types.Message, entities: dict):
@@ -333,4 +244,4 @@ async def update_status(message: types.Message, entities: dict):
         await message.answer("✅ Статус успешно обновлен!")
     except Exception as e:
         await message.answer("❌ Не удалось обновить статус. Попробуйте позже.")
-        print(f"Error updating status: {e}")
+        logger.error(f"Error updating status: {e}")
