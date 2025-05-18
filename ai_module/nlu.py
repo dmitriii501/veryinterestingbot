@@ -119,7 +119,7 @@ class NLUProcessor:
             logger.error(f"Error calling AI API: {e}")
             raise
 
-        async def process_query(self, user_query: str) -> Optional[Dict[str, Any]]:
+    async def process_query(self, user_query: str) -> Optional[Dict[str, Any]]:
         """
         Process a user query through the NLU pipeline.
 
@@ -190,54 +190,17 @@ async def process_user_query(user_query: str, system_prompt: str = None) -> Opti
         logger.error(f"Error in process_user_query: {e}")
         return None
 
-async def main():
-    """
-    Пример использования функции process_user_query.
-    """
-    user_query = "Найти сотрудников из отдела продаж 05.03.2024 и 06.03.2024"
-    system_prompt = (
-        "Ты — AI-парсер запросов в корпоративном приложении. "
-        "Пользователь пишет запрос в свободной форме. Твоя задача — извлечь только intent (намерение) "
-        "и entities (сущности), которые явно указаны в тексте. Не отвечай на вопрос, не выдумывай данные, "
-        "не интерпретируй неявные фразы. Дата должна быть только в формате дд.мм.гггг. "
-        "Если дата указана иначе (например, 'завтра'), не добавляй сущность date. "
-        "Если сущность не указана — не включай её в JSON. "
-        "Ответ строго в формате JSON.\n\n"
-        "Возможные интенты:\n"
-        "- find_employee: Поиск сотрудника\n"
-        "- event_info: Инфо о мероприятиях\n"
-        "- birthday_info: Дни рождения\n"
-        "- task_info: Задачи\n"
-        "- availability: Свободен ли сотрудник\n"
-        "- lunch_game_invite: Найти коллег по интересам\n"
-        "- general_question: Общий вопрос\n"
-        "- unknown: Неопределено\n\n"
-        "Возможные сущности:\n"
-        "- employee_name: имя сотрудника\n"
-        "- department: отдел\n"
-        "- project: проект\n"
-        "- date: дата (только в формате дд.мм.гггг)\n"
-        "- event_type: тип события\n"
-        "- task_keyword: ключ задачи\n"
-        "- location: место\n\n"
-        'Пример запроса: "Кто из разработки работает 20.05.2025?"\n'
-        "Ожидаемый ответ:\n\n"
-        '{\n'
-        '  "intent": "availability",\n'
-        '  "entities": {\n'
-        '    "department": "разработка",\n'
-        '    "date": "20.05.2025"\n'
-        "  }\n"
-        "}"
-    )
-
-    response = await process_user_query(user_query, system_prompt)
-    if response:
-        print("Ответ ИИ:")
-        print(response)
-    else:
-        print("Произошла ошибка при обработке запроса пользователя.")
-
-
 if __name__ == "__main__":
+    async def main():
+        """
+        Пример использования функции process_user_query.
+        """
+        user_query = "Найти сотрудников из отдела продаж 05.03.2024 и 06.03.2024"
+        response = await process_user_query(user_query)
+        if response:
+            print("Ответ ИИ:")
+            print(response)
+        else:
+            print("Произошла ошибка при обработке запроса пользователя.")
+
     asyncio.run(main())
