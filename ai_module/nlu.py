@@ -1,75 +1,59 @@
-import requests
-import json
 import os
 from bot.config import app_settings
+from openai import OpenAI
 
 # Получаем API-ключ из конфигурации
 API_KEY = app_settings.AI_API_KEY
-MODEL = "google/gemma-3-1b-it:free"  # Можно заменить на нужную модель OpenRouter
+NSCALE_BASE_URL = "https://inference.api.nscale.com/v1"
+MODEL = "Qwen/Qwen3-235B-A22B"
 
 print("[DEBUG] AI_API_KEY из .env:", os.getenv("AI_API_KEY"))
 print("[DEBUG] API_KEY из app_settings:", API_KEY)
-print(repr(os.getenv("AI_API_KEY")))
 
+client = OpenAI(
+    api_key=API_KEY,
+    base_url=NSCALE_BASE_URL
+)
 
-def log_openrouter_response(response):
-    print("[DEBUG] OpenRouter response object:", response)
-    print("[DEBUG] status_code:", response.status_code)
-    try:
-        print("[DEBUG] response.json():", response.json())
-    except Exception as e:
-        print("[DEBUG] Ошибка при выводе response.json():", e)
+def log_nscale_response(response):
+    print("[DEBUG] Nscale response object:", response)
+    if hasattr(response, 'choices'):
+        print("[DEBUG] choices:", response.choices)
+    if hasattr(response, 'usage'):
+        print("[DEBUG] usage:", response.usage)
 
 
 async def process_user_query(user_query: str, system_prompt: str) -> str | None:
     """
-    Отправляет запрос пользователя в OpenRouter и возвращает ответ.
+    Отправляет запрос пользователя в Nscale (через OpenAI совместимый API) и возвращает ответ.
     """
     if not API_KEY:
-        print("ОШИБКА: API ключ OpenRouter не настроен")
+        print("ОШИБКА: API ключ Nscale не настроен")
         return None
 
-    headers = {
-        "Authorization": f"Bearer {API_KEY}",
-        "Content-Type": "application/json",
-    }
     messages = [
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_query},
     ]
-    payload = {
-        "model": MODEL,
-        "messages": messages,
-        "stream": False,
-    }
 
     print("[DEBUG] Отправляемый messages:", messages)
     print("[DEBUG] Используемый API_KEY:", API_KEY)
+    print("[DEBUG] Используемый base_url:", NSCALE_BASE_URL)
+    print("[DEBUG] Используемая модель:", MODEL)
 
     try:
-        response = requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers=headers,
-            json=payload,
-            timeout=30
+        response = client.chat.completions.create(
+            model=MODEL,
+            messages=messages
         )
-        log_openrouter_response(response)
-        response.raise_for_status()
-        response_json = response.json()
-        if response_json and response_json.get("choices"):
-            content = response_json["choices"][0]["message"]["content"]
-            return content.strip()
+        log_nscale_response(response)
+        if response.choices and response.choices[0].message:
+            return response.choices[0].message.content.strip()
         else:
-            print("[DEBUG] OpenRouter вернул пустой ответ.")
+            print("[DEBUG] Nscale вернул пустой ответ.")
             return None
-    except requests.exceptions.RequestException as e:
-        print(f"Ошибка при запросе к OpenRouter: {e}")
-        return None
-    except json.JSONDecodeError:
-        print("Ошибка при обработке ответа: Некорректный JSON от OpenRouter")
-        return None
     except Exception as e:
-        print(f"Непредвиденная ошибка: {e}")
+        print(f"Ошибка при запросе к Nscale: {e}")
         return None
 
 
