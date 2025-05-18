@@ -1,7 +1,7 @@
 # bot/handlers/ai_intent_handler.py
 import json
 import logging
-from typing import Dict, Callable, Awaitable
+from typing import Dict, Callable, Awaitable, Optional
 
 from aiogram import Router, types, Bot, F
 from aiogram.filters import Command
@@ -13,8 +13,14 @@ from bot.config import app_settings
 from bot.utils.database import execute_supabase_query
 from bot.utils.ai_request_models import AIRequest, AIRequestEntities
 
-router = Router(name="ai_intent")
+from ai_module.nlu import NLUProcessor
+from ai_module.response_generator import ResponseGenerator
+
+router = Router(name="ai_intent_handler")
 logger = logging.getLogger(__name__)
+
+# Initialize processors
+nlu_processor = NLUProcessor()
 
 
 async def handle_find_employee(entities: AIRequestEntities, supabase: Client) -> str:
@@ -236,55 +242,50 @@ async def extract_entities(text: str, intent: str) -> dict:
 
 
 @router.message(F.text)
-async def process_message(message: types.Message):
-    text = message.text
-    
-    # Определяем намерение пользователя
-    intent_data = await classify_intent(text)
-    intent = intent_data["intent"]
-    confidence = intent_data["confidence"]
-    
-    if intent == "unknown" or confidence < 0.7:
+async def handle_user_message(message: types.Message):
+    """
+    Process user messages through the two-stage AI pipeline:
+    1. NLU processing to extract intent and entities
+    2. Response generation based on the extracted information
+    """
+    try:
+        # Get bot instance to access Supabase client
+        bot = message.bot
+        if not bot.supabase_client:
+            await message.answer("Извините, но сервис временно недоступен. Попробуйте позже.")
+            logger.error("Supabase client not initialized")
+            return
+
+        # Initialize response generator with Supabase client
+        response_generator = ResponseGenerator(bot.supabase_client)
+
+        # Stage 1: NLU Processing
+        nlu_result = await nlu_processor.process_query(message.text)
+        if not nlu_result:
+            await message.answer(
+                "Извините, но я не смог правильно понять ваш запрос. "
+                "Пожалуйста, попробуйте переформулировать."
+            )
+            return
+
+        logger.info(f"NLU Result for message '{message.text}': {nlu_result}")
+
+        # Stage 2: Response Generation
+        response = await response_generator.generate_response(nlu_result)
+        if not response:
+            await message.answer(
+                "Извините, но произошла ошибка при обработке вашего запроса. "
+                "Пожалуйста, попробуйте еще раз позже."
+            )
+            return
+
+        await message.answer(response)
+
+    except Exception as e:
+        logger.error(f"Error processing message: {e}", exc_info=True)
         await message.answer(
-            "🤔 Извините, я не совсем понял ваш запрос. Попробуйте переформулировать."
+            "Произошла непредвиденная ошибка. Пожалуйста, попробуйте позже."
         )
-        return
-    
-    # Извлекаем сущности из текста
-    entities = await extract_entities(text, intent)
-    
-    # В зависимости от намерения и сущностей формируем соответствующий запрос
-    if intent.startswith("search_"):
-        # Перенаправляем на поиск
-        router_name = "search" if entities else "ai_db_query"
-        await message.bot.get_router(router_name).process_message(message)
-    
-    elif intent == "create_event":
-        if all(k in entities for k in ["title", "date"]):
-            await create_event(message, entities)
-        else:
-            await message.answer(
-                "📅 Для создания мероприятия мне нужны хотя бы название и дата.\n"
-                "Например: 'Создай встречу команды разработки на завтра в 15:00'"
-            )
-    
-    elif intent == "create_task":
-        if all(k in entities for k in ["title", "due_date"]):
-            await create_task(message, entities)
-        else:
-            await message.answer(
-                "📋 Для создания задачи мне нужны хотя бы название и срок.\n"
-                "Например: 'Создай задачу подготовить отчет до пятницы'"
-            )
-    
-    elif intent == "update_status":
-        if all(k in entities for k in ["entity_type", "entity_id", "new_status"]):
-            await update_status(message, entities)
-        else:
-            await message.answer(
-                "❌ Не хватает информации для обновления статуса.\n"
-                "Например: 'Отметь задачу 123 как выполненную'"
-            )
 
 
 async def create_event(message: types.Message, entities: dict):
