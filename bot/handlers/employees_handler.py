@@ -5,7 +5,7 @@ from aiogram.types import Message
 from aiogram.filters import Command
 from supabase import Client
 
-from  bot.utils.database import fetch_data_from_table
+from  bot.utils.database import execute_supabase_query
 
 router = Router(name="employees_commands")
 logger = logging.getLogger(__name__)
@@ -26,7 +26,7 @@ async def get_employees_command(message: Message, bot: Bot):
     columns_to_select = "name, hire_date, department, phone_number, job_title"
 
     logger.debug(f"Запрос данных из таблицы '{table_name}', колонки: '{columns_to_select}'")
-    employees_list, error = await fetch_data_from_table(supabase, table_name, columns=columns_to_select)
+    employees_list, error = await execute_supabase_query(supabase, table_name, columns=columns_to_select)
 
     if error:
         logger.error(f"Ошибка при получении данных из Supabase: {error}")
