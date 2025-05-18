@@ -1,4 +1,5 @@
-from aiogram import Router, types
+from aiogram import Router, Bot
+from aiogram import types
 from aiogram.filters import Command
 import json
 import re
@@ -20,7 +21,7 @@ def escape_markdown_v2(text: str) -> str:
     escape_chars = r'_*[]()~`>#+-=|{}.!'
     return ''.join(f'\\{c}' if c in escape_chars else c for c in text)
 
-async def find_employee_phone(bot: types.Bot, employee_name: str) -> Optional[str]:
+async def find_employee_phone(bot: Bot, employee_name: str) -> Optional[str]:
     """
     Ищет номер телефона сотрудника в базе данных Supabase.
     
