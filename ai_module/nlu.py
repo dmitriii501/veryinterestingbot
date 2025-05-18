@@ -1,71 +1,74 @@
+import requests
 import json
-import dashscope
 import os
 from bot.config import app_settings
 
 # Получаем API-ключ из конфигурации
-API_KEY = app_settings.DASHSCOPE_API_KEY
+API_KEY = app_settings.AI_API_KEY
+MODEL = "google/gemma-3-1b-it:free"  # Можно заменить на нужную модель OpenRouter
 
-print("[DEBUG] DASHSCOPE_API_KEY из .env:", os.getenv("DASHSCOPE_API_KEY"))
+print("[DEBUG] AI_API_KEY из .env:", os.getenv("AI_API_KEY"))
 print("[DEBUG] API_KEY из app_settings:", API_KEY)
 
 
-def log_dashscope_response(response):
-    print("[DEBUG] DashScope response object:", response)
-    if hasattr(response, 'status_code'):
-        print("[DEBUG] status_code:", response.status_code)
-    if hasattr(response, 'output'):
-        print("[DEBUG] output:", response.output)
-    if hasattr(response, 'code'):
-        print("[DEBUG] code:", getattr(response, 'code', None))
-    if hasattr(response, 'message'):
-        print("[DEBUG] message:", getattr(response, 'message', None))
+def log_openrouter_response(response):
+    print("[DEBUG] OpenRouter response object:", response)
+    print("[DEBUG] status_code:", response.status_code)
+    try:
+        print("[DEBUG] response.json():", response.json())
+    except Exception as e:
+        print("[DEBUG] Ошибка при выводе response.json():", e)
 
 
 async def process_user_query(user_query: str, system_prompt: str) -> str | None:
     """
-    Отправляет запрос пользователя в DashScope и возвращает ответ.
-
-    Args:
-        user_query: Запрос пользователя (str).
-        system_prompt: Системный промпт для настройки поведения ИИ (str).
-
-    Returns:
-        Ответ от DashScope (str) в случае успеха, None в случае ошибки.
+    Отправляет запрос пользователя в OpenRouter и возвращает ответ.
     """
     if not API_KEY:
-        print("ОШИБКА: API ключ DashScope не настроен")
+        print("ОШИБКА: API ключ OpenRouter не настроен")
         return None
 
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json",
+    }
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_query},
+    ]
+    payload = {
+        "model": MODEL,
+        "messages": messages,
+        "stream": False,
+    }
+
+    print("[DEBUG] Отправляемый messages:", messages)
+    print("[DEBUG] Используемый API_KEY:", API_KEY)
+
     try:
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_query}
-        ]
-
-        print("[DEBUG] Отправляемый messages:", messages)
-        print("[DEBUG] Используемый API_KEY:", API_KEY)
-
-        response = dashscope.Generation.call(
-            model='qwen-max',
-            messages=messages,
-            api_key=API_KEY,
-            result_format='message',
-            max_tokens=1000,
-            temperature=0.1
+        response = requests.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers=headers,
+            json=payload,
+            timeout=30
         )
-
-        log_dashscope_response(response)
-        
-        if response.status_code == 200:
-            print("[DEBUG] Успешный ответ DashScope")
-            return response.output.choices[0].message.content.strip()
+        log_openrouter_response(response)
+        response.raise_for_status()
+        response_json = response.json()
+        if response_json and response_json.get("choices"):
+            content = response_json["choices"][0]["message"]["content"]
+            return content.strip()
         else:
-            print(f"Ошибка DashScope API: {getattr(response, 'code', None)} - {getattr(response, 'message', None)}")
+            print("[DEBUG] OpenRouter вернул пустой ответ.")
             return None
-
+    except requests.exceptions.RequestException as e:
+        print(f"Ошибка при запросе к OpenRouter: {e}")
+        return None
+    except json.JSONDecodeError:
+        print("Ошибка при обработке ответа: Некорректный JSON от OpenRouter")
+        return None
     except Exception as e:
-        print(f"Ошибка при обработке запроса: {e}")
+        print(f"Непредвиденная ошибка: {e}")
         return None
 
 
