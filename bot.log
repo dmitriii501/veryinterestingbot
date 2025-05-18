@@ -708,3 +708,47 @@ TypeError: unsupported operand type(s) for &: 'str' and '_InvertFilter'
 2025-05-18 17:52:41,715 - root - INFO - Сессия бота закрыта.
 2025-05-18 17:52:41,716 - aiogram.dispatcher - INFO - Polling stopped for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
 2025-05-18 17:52:41,718 - root - INFO - Бот остановлен вручную.
+2025-05-18 17:55:11,994 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 17:55:12,001 - root - INFO - Запуск бота...
+2025-05-18 17:55:12,496 - root - WARNING - ALLOWED_USER_IDS не настроен или пуст. Авторизация по ID отключена.
+2025-05-18 17:55:13,023 - root - INFO - Успешно подключились к Supabase!
+2025-05-18 17:55:13,024 - root - INFO - Регистрация хендлеров...
+2025-05-18 17:55:13,024 - root - INFO - Роутер 'start' зарегистрирован.
+2025-05-18 17:55:13,025 - root - INFO - Роутер 'Помощник' зарегистрирован.
+2025-05-18 17:55:13,025 - root - ERROR - Роутер из bot.handlers.ai_query не найден или не имеет атрибута 'router'.
+2025-05-18 17:55:13,025 - root - INFO - Роутер 'employees_commands' зарегистрирован.
+2025-05-18 17:55:13,026 - root - INFO - Роутер 'nlu_handler' зарегистрирован.
+2025-05-18 17:55:13,026 - root - INFO - Роутер 'ai_intent_handler' зарегистрирован.
+2025-05-18 17:55:14,254 - root - INFO - Начинаем поллинг...
+2025-05-18 17:55:14,255 - aiogram.dispatcher - INFO - Start polling
+2025-05-18 17:55:14,441 - aiogram.dispatcher - INFO - Run polling for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 17:55:36,477 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 17:55:42,114 - httpx - INFO - HTTP Request: POST https://inference.api.nscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 17:55:42,119 - ai_module.nlu - INFO - Successfully processed query. Intent: find_employee
+2025-05-18 17:55:43,755 - httpx - INFO - HTTP Request: GET https://adfvvxoxnrcyqsuausuq.supabase.co/rest/v1/employees?select=%2A&name=ilike.%25%D0%A8%D0%BC%D0%B8%D0%B4%D1%82+%D0%92%D0%B8%D0%BA%D1%82%D0%BE%D1%80+%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2%D0%B8%D1%87%25 "HTTP/2 200 OK"
+2025-05-18 17:55:44,797 - aiogram.event - INFO - Update id=887249253 is handled. Duration 8783 ms by bot id=7843707990
+2025-05-18 17:56:04,996 - httpx - INFO - HTTP Request: POST https://inference.api.nscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 17:56:04,998 - ai_module.nlu - INFO - Successfully processed query. Intent: find_by_position
+2025-05-18 17:56:05,854 - httpx - INFO - HTTP Request: GET https://adfvvxoxnrcyqsuausuq.supabase.co/rest/v1/employees?select=%2A&job_title=ilike.%25%D1%8E%D1%80%D0%B8%D1%81%D1%82%25 "HTTP/2 200 OK"
+2025-05-18 17:56:06,149 - aiogram.event - INFO - Update id=887249254 is handled. Duration 5696 ms by bot id=7843707990
+2025-05-18 17:56:39,819 - httpx - INFO - HTTP Request: POST https://inference.api.nscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 17:56:39,824 - ai_module.nlu - INFO - Successfully processed query. Intent: find_employee
+2025-05-18 17:56:40,926 - httpx - INFO - HTTP Request: GET https://adfvvxoxnrcyqsuausuq.supabase.co/rest/v1/employees?select=%2A "HTTP/2 200 OK"
+2025-05-18 17:56:41,251 - aiogram.event - INFO - Update id=887249255 is handled. Duration 8352 ms by bot id=7843707990
+2025-05-18 17:57:27,016 - httpx - INFO - HTTP Request: POST https://inference.api.nscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 17:57:27,059 - ai_module.nlu - INFO - Successfully processed query. Intent: find_employee
+2025-05-18 17:57:28,267 - httpx - INFO - HTTP Request: GET https://adfvvxoxnrcyqsuausuq.supabase.co/rest/v1/employees?select=%2A "HTTP/2 200 OK"
+2025-05-18 17:57:28,640 - aiogram.event - INFO - Update id=887249256 is handled. Duration 6599 ms by bot id=7843707990
+2025-05-18 17:58:22,020 - httpx - INFO - HTTP Request: POST https://inference.api.nscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 17:58:22,022 - ai_module.nlu - INFO - Successfully processed query. Intent: find_by_position
+2025-05-18 17:58:22,852 - httpx - INFO - HTTP Request: GET https://adfvvxoxnrcyqsuausuq.supabase.co/rest/v1/employees?select=%2A&job_title=ilike.%25%D0%BC%D0%B5%D0%BD%D0%B5%D0%B4%D0%B6%D0%B5%D1%80%25 "HTTP/2 200 OK"
+2025-05-18 17:58:23,084 - aiogram.event - INFO - Update id=887249257 is handled. Duration 6053 ms by bot id=7843707990
+2025-05-18 17:59:14,022 - httpx - INFO - HTTP Request: POST https://inference.api.nscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 17:59:14,024 - ai_module.nlu - INFO - Successfully processed query. Intent: find_employee
+2025-05-18 17:59:15,105 - httpx - INFO - HTTP Request: GET https://adfvvxoxnrcyqsuausuq.supabase.co/rest/v1/employees?select=%2A&name=ilike.%25%D0%A1%D0%BC%D0%B8%D1%80%D0%BD%D0%BE%D0%B2%D0%B0+%D0%9E%D0%BB%D1%8C%D0%B3%D0%B0+%D0%92%D0%B8%D0%BA%D1%82%D0%BE%D1%80%D0%BE%D0%B2%D0%BD%D0%B0%25 "HTTP/2 200 OK"
+2025-05-18 17:59:15,316 - aiogram.event - INFO - Update id=887249258 is handled. Duration 6596 ms by bot id=7843707990
+2025-05-18 17:59:43,311 - aiogram.dispatcher - INFO - Polling stopped
+2025-05-18 17:59:43,575 - root - INFO - Остановка бота...
+2025-05-18 17:59:43,576 - root - INFO - Сессия бота закрыта.
+2025-05-18 17:59:43,578 - aiogram.dispatcher - INFO - Polling stopped for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 17:59:43,580 - root - INFO - Бот остановлен вручную.
