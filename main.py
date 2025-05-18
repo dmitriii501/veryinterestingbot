@@ -79,7 +79,8 @@ async def setup_supabase(bot: Bot) -> None:
             bot.supabase_client = None
         else:
             supabase_client_instance: Client = create_client(
-                app_settings.SUPABASE_URL, app_settings.SUPABASE_KEY
+                app_settings.SUPABASE_URL,
+                app_settings.SUPABASE_KEY.get_secret_value()
             )
             logging.info("Успешно подключились к Supabase!")
             bot.supabase_client = supabase_client_instance
