@@ -153,15 +153,6 @@ async def nlu_command_handler(message: types.Message):
                         response += "\n"
                     await message.answer(response.strip())
             
-            # Показываем результат NLU анализа для отладки (закомментировано)
-            # formatted_json = json.dumps(result, ensure_ascii=False, indent=2)
-            # escaped_lines = [escape_markdown_v2(line) for line in formatted_json.split('\n')]
-            # escaped_response = '\n'.join(escaped_lines)
-            # debug_text = f"Детали анализа запроса:\n```json\n{escaped_response}\n```"
-            # try:
-            #     await message.answer(debug_text, parse_mode="MarkdownV2")
-            # except Exception as e:
-            #     logging.error(f"Failed to send debug info: {e}")
                 
         except Exception as e:
             logging.error(f"Error processing response: {e}")

@@ -1,0 +1,710 @@
+2025-05-18 16:53:13,126 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 16:53:13,137 - root - INFO - Запуск бота...
+2025-05-18 16:53:13,140 - root - ERROR - Критическая ошибка при запуске/работе бота: Token is invalid! It must be 'str' type instead of <class 'pydantic.types.SecretStr'> type.
+Traceback (most recent call last):
+  File "C:\Users\вшьф\veryinterestingbot-2\main.py", line 150, in <module>
+    asyncio.run(main())
+    ~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\вшьф\AppData\Local\Programs\Python\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\вшьф\AppData\Local\Programs\Python\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\вшьф\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "C:\Users\вшьф\veryinterestingbot-2\main.py", line 100, in main
+    bot = Bot(token=app_settings.BOT_TOKEN, parse_mode=ParseMode.HTML)
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\client\bot.py", line 266, in __init__
+    validate_token(token)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\utils\token.py", line 17, in validate_token
+    raise TokenValidationError(
+        f"Token is invalid! It must be 'str' type instead of {type(token)} type."
+    )
+aiogram.utils.token.TokenValidationError: Token is invalid! It must be 'str' type instead of <class 'pydantic.types.SecretStr'> type.
+2025-05-18 16:54:58,133 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 16:54:58,138 - root - INFO - Запуск бота...
+2025-05-18 16:54:58,676 - root - ERROR - Критическая ошибка при запуске/работе бота: Passing `parse_mode`, `disable_web_page_preview` or `protect_content` to Bot initializer is not supported anymore. These arguments have been removed in 3.7.0 version. Use `default=DefaultBotProperties(parse_mode=<ParseMode.HTML: 'HTML'>)` argument instead.
+Traceback (most recent call last):
+  File "C:\Users\вшьф\veryinterestingbot-2\main.py", line 150, in <module>
+    asyncio.run(main())
+    ~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\вшьф\AppData\Local\Programs\Python\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\вшьф\AppData\Local\Programs\Python\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\вшьф\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "C:\Users\вшьф\veryinterestingbot-2\main.py", line 100, in main
+    bot = Bot(token=app_settings.BOT_TOKEN.get_secret_value(), parse_mode=ParseMode.HTML)
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\client\bot.py", line 294, in __init__
+    raise TypeError(
+    ...<3 lines>...
+    )
+TypeError: Passing `parse_mode`, `disable_web_page_preview` or `protect_content` to Bot initializer is not supported anymore. These arguments have been removed in 3.7.0 version. Use `default=DefaultBotProperties(parse_mode=<ParseMode.HTML: 'HTML'>)` argument instead.
+2025-05-18 16:56:10,209 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 16:56:10,221 - root - INFO - Запуск бота...
+2025-05-18 16:56:11,069 - root - WARNING - ALLOWED_USER_IDS не настроен или пуст. Авторизация по ID отключена.
+2025-05-18 16:56:11,070 - root - ERROR - Ошибка подключения к Supabase: expected string or bytes-like object, got 'SecretStr'
+Traceback (most recent call last):
+  File "C:\Users\вшьф\veryinterestingbot-2\main.py", line 81, in setup_supabase
+    supabase_client_instance: Client = create_client(
+                                       ~~~~~~~~~~~~~^
+        app_settings.SUPABASE_URL, app_settings.SUPABASE_KEY
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\supabase\_sync\client.py", line 338, in create_client
+    return SyncClient.create(
+           ~~~~~~~~~~~~~~~~~^
+        supabase_url=supabase_url, supabase_key=supabase_key, options=options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\supabase\_sync\client.py", line 101, in create
+    client = cls(supabase_url, supabase_key, options)
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\supabase\_sync\client.py", line 60, in __init__
+    if not re.match(
+           ~~~~~~~~^
+        r"^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$", supabase_key
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "C:\Users\вшьф\AppData\Local\Programs\Python\Python313\Lib\re\__init__.py", line 167, in match
+    return _compile(pattern, flags).match(string)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+TypeError: expected string or bytes-like object, got 'SecretStr'
+2025-05-18 16:56:11,084 - root - INFO - Регистрация хендлеров...
+2025-05-18 16:56:11,085 - root - INFO - Роутер 'start' зарегистрирован.
+2025-05-18 16:56:11,085 - root - INFO - Роутер 'Помощник' зарегистрирован.
+2025-05-18 16:56:11,086 - root - ERROR - Роутер из bot.handlers.ai_query не найден или не имеет атрибута 'router'.
+2025-05-18 16:56:11,086 - root - INFO - Роутер 'employees_commands' зарегистрирован.
+2025-05-18 16:56:11,089 - root - INFO - Роутер 'nlu_handler' зарегистрирован.
+2025-05-18 16:56:11,091 - root - INFO - Роутер 'ai_intent_handler' зарегистрирован.
+2025-05-18 16:56:12,325 - root - INFO - Начинаем поллинг...
+2025-05-18 16:56:12,326 - aiogram.dispatcher - INFO - Start polling
+2025-05-18 16:56:12,529 - aiogram.dispatcher - INFO - Run polling for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 16:56:41,530 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 16:56:47,097 - httpx - INFO - HTTP Request: POST https://inference.api.nscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 16:56:47,102 - ai_module.nlu - INFO - Successfully processed query. Intent: find_employee
+2025-05-18 16:57:47,995 - aiogram.event - INFO - Update id=887249231 is handled. Duration 66963 ms by bot id=7843707990
+2025-05-18 16:59:00,427 - aiogram.dispatcher - INFO - Polling stopped
+2025-05-18 16:59:00,692 - root - INFO - Остановка бота...
+2025-05-18 16:59:00,694 - root - INFO - Сессия бота закрыта.
+2025-05-18 16:59:00,698 - aiogram.dispatcher - INFO - Polling stopped for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 16:59:00,751 - root - INFO - Бот остановлен вручную.
+2025-05-18 17:00:09,927 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 17:00:09,931 - root - INFO - Запуск бота...
+2025-05-18 17:00:10,410 - root - WARNING - ALLOWED_USER_IDS не настроен или пуст. Авторизация по ID отключена.
+2025-05-18 17:00:10,411 - root - ERROR - Ошибка подключения к Supabase: expected string or bytes-like object, got 'SecretStr'
+Traceback (most recent call last):
+  File "C:\Users\вшьф\veryinterestingbot-2\main.py", line 81, in setup_supabase
+    supabase_client_instance: Client = create_client(
+                                       ~~~~~~~~~~~~~^
+        app_settings.SUPABASE_URL, app_settings.SUPABASE_KEY
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\supabase\_sync\client.py", line 338, in create_client
+    return SyncClient.create(
+           ~~~~~~~~~~~~~~~~~^
+        supabase_url=supabase_url, supabase_key=supabase_key, options=options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\supabase\_sync\client.py", line 101, in create
+    client = cls(supabase_url, supabase_key, options)
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\supabase\_sync\client.py", line 60, in __init__
+    if not re.match(
+           ~~~~~~~~^
+        r"^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$", supabase_key
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "C:\Users\вшьф\AppData\Local\Programs\Python\Python313\Lib\re\__init__.py", line 167, in match
+    return _compile(pattern, flags).match(string)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+TypeError: expected string or bytes-like object, got 'SecretStr'
+2025-05-18 17:00:10,418 - root - INFO - Регистрация хендлеров...
+2025-05-18 17:00:10,419 - root - INFO - Роутер 'start' зарегистрирован.
+2025-05-18 17:00:10,420 - root - INFO - Роутер 'Помощник' зарегистрирован.
+2025-05-18 17:00:10,421 - root - ERROR - Роутер из bot.handlers.ai_query не найден или не имеет атрибута 'router'.
+2025-05-18 17:00:10,422 - root - INFO - Роутер 'employees_commands' зарегистрирован.
+2025-05-18 17:00:10,422 - root - INFO - Роутер 'nlu_handler' зарегистрирован.
+2025-05-18 17:00:10,423 - root - INFO - Роутер 'ai_intent_handler' зарегистрирован.
+2025-05-18 17:00:11,604 - root - INFO - Начинаем поллинг...
+2025-05-18 17:00:11,605 - aiogram.dispatcher - INFO - Start polling
+2025-05-18 17:00:11,777 - aiogram.dispatcher - INFO - Run polling for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 17:00:21,544 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 17:00:25,797 - httpx - INFO - HTTP Request: POST https://inference.api.nscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 17:00:25,804 - ai_module.nlu - INFO - Successfully processed query. Intent: find_employee
+2025-05-18 17:00:27,068 - aiogram.event - INFO - Update id=887249232 is handled. Duration 6080 ms by bot id=7843707990
+2025-05-18 17:00:44,879 - aiogram.dispatcher - INFO - Polling stopped
+2025-05-18 17:00:45,134 - root - INFO - Остановка бота...
+2025-05-18 17:00:45,135 - root - INFO - Сессия бота закрыта.
+2025-05-18 17:00:45,136 - aiogram.dispatcher - INFO - Polling stopped for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 17:00:45,139 - root - INFO - Бот остановлен вручную.
+2025-05-18 17:05:38,616 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 17:05:38,624 - root - INFO - Запуск бота...
+2025-05-18 17:05:39,239 - root - WARNING - ALLOWED_USER_IDS не настроен или пуст. Авторизация по ID отключена.
+2025-05-18 17:05:39,241 - root - ERROR - Ошибка подключения к Supabase: expected string or bytes-like object, got 'SecretStr'
+Traceback (most recent call last):
+  File "C:\Users\вшьф\veryinterestingbot-2\main.py", line 81, in setup_supabase
+    supabase_client_instance: Client = create_client(
+                                       ~~~~~~~~~~~~~^
+        app_settings.SUPABASE_URL, app_settings.SUPABASE_KEY
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\supabase\_sync\client.py", line 338, in create_client
+    return SyncClient.create(
+           ~~~~~~~~~~~~~~~~~^
+        supabase_url=supabase_url, supabase_key=supabase_key, options=options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\supabase\_sync\client.py", line 101, in create
+    client = cls(supabase_url, supabase_key, options)
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\supabase\_sync\client.py", line 60, in __init__
+    if not re.match(
+           ~~~~~~~~^
+        r"^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$", supabase_key
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "C:\Users\вшьф\AppData\Local\Programs\Python\Python313\Lib\re\__init__.py", line 167, in match
+    return _compile(pattern, flags).match(string)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+TypeError: expected string or bytes-like object, got 'SecretStr'
+2025-05-18 17:05:39,249 - root - INFO - Регистрация хендлеров...
+2025-05-18 17:05:39,249 - root - INFO - Роутер 'start' зарегистрирован.
+2025-05-18 17:05:39,249 - root - INFO - Роутер 'Помощник' зарегистрирован.
+2025-05-18 17:05:39,250 - root - ERROR - Роутер из bot.handlers.ai_query не найден или не имеет атрибута 'router'.
+2025-05-18 17:05:39,250 - root - INFO - Роутер 'employees_commands' зарегистрирован.
+2025-05-18 17:05:39,250 - root - INFO - Роутер 'nlu_handler' зарегистрирован.
+2025-05-18 17:05:39,250 - root - INFO - Роутер 'ai_intent_handler' зарегистрирован.
+2025-05-18 17:05:39,976 - root - INFO - Начинаем поллинг...
+2025-05-18 17:05:39,977 - aiogram.dispatcher - INFO - Start polling
+2025-05-18 17:05:40,098 - aiogram.dispatcher - INFO - Run polling for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 17:05:51,124 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 17:05:55,842 - httpx - INFO - HTTP Request: POST https://inference.api.nscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 17:05:55,847 - ai_module.nlu - INFO - Successfully processed query. Intent: find_employee
+2025-05-18 17:05:55,848 - root - ERROR - Supabase client not configured
+2025-05-18 17:05:57,123 - aiogram.event - INFO - Update id=887249233 is handled. Duration 6490 ms by bot id=7843707990
+2025-05-18 17:06:26,472 - httpx - INFO - HTTP Request: POST https://inference.api.nscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 17:06:26,475 - ai_module.nlu - INFO - Successfully processed query. Intent: find_employee
+2025-05-18 17:06:26,476 - root - ERROR - Supabase client not configured
+2025-05-18 17:06:26,894 - aiogram.event - INFO - Update id=887249234 is handled. Duration 5232 ms by bot id=7843707990
+2025-05-18 17:07:46,239 - aiogram.dispatcher - INFO - Polling stopped
+2025-05-18 17:07:46,495 - root - INFO - Остановка бота...
+2025-05-18 17:07:46,495 - root - INFO - Сессия бота закрыта.
+2025-05-18 17:07:46,497 - aiogram.dispatcher - INFO - Polling stopped for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 17:07:46,499 - root - INFO - Бот остановлен вручную.
+2025-05-18 17:07:59,866 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 17:07:59,870 - root - INFO - Запуск бота...
+2025-05-18 17:08:00,379 - root - WARNING - ALLOWED_USER_IDS не настроен или пуст. Авторизация по ID отключена.
+2025-05-18 17:08:00,863 - root - INFO - Успешно подключились к Supabase!
+2025-05-18 17:08:00,864 - root - INFO - Регистрация хендлеров...
+2025-05-18 17:08:00,864 - root - INFO - Роутер 'start' зарегистрирован.
+2025-05-18 17:08:00,865 - root - INFO - Роутер 'Помощник' зарегистрирован.
+2025-05-18 17:08:00,865 - root - ERROR - Роутер из bot.handlers.ai_query не найден или не имеет атрибута 'router'.
+2025-05-18 17:08:00,865 - root - INFO - Роутер 'employees_commands' зарегистрирован.
+2025-05-18 17:08:00,866 - root - INFO - Роутер 'nlu_handler' зарегистрирован.
+2025-05-18 17:08:00,866 - root - INFO - Роутер 'ai_intent_handler' зарегистрирован.
+2025-05-18 17:08:01,535 - root - INFO - Начинаем поллинг...
+2025-05-18 17:08:01,536 - aiogram.dispatcher - INFO - Start polling
+2025-05-18 17:08:01,668 - aiogram.dispatcher - INFO - Run polling for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 17:08:11,749 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 17:08:17,155 - httpx - INFO - HTTP Request: POST https://inference.api.nscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 17:08:17,164 - ai_module.nlu - INFO - Successfully processed query. Intent: find_employee
+2025-05-18 17:08:18,592 - httpx - INFO - HTTP Request: GET https://adfvvxoxnrcyqsuausuq.supabase.co/rest/v1/employees?select=name%2Cphone_number&name=ilike.%25%D0%A8%D0%BC%D0%B8%D0%B4%D1%82+%D0%92%D0%B8%D0%BA%D1%82%D0%BE%D1%80+%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2%D0%B8%D1%87%25 "HTTP/2 200 OK"
+2025-05-18 17:08:19,691 - aiogram.event - INFO - Update id=887249235 is handled. Duration 8441 ms by bot id=7843707990
+2025-05-18 17:09:43,345 - httpx - INFO - HTTP Request: POST https://inference.api.nscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 17:09:43,347 - ai_module.nlu - INFO - Successfully processed query. Intent: find_employee
+2025-05-18 17:09:44,724 - httpx - INFO - HTTP Request: GET https://adfvvxoxnrcyqsuausuq.supabase.co/rest/v1/employees?select=name%2Cphone_number&name=ilike.%25%D0%A8%D0%BC%D0%B8%D0%B4%D1%82+%D0%92%D0%B8%D0%BA%D1%82%D0%BE%D1%80+%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2%D0%B8%D1%87%25 "HTTP/2 200 OK"
+2025-05-18 17:09:45,367 - aiogram.event - INFO - Update id=887249236 is handled. Duration 6698 ms by bot id=7843707990
+2025-05-18 17:10:12,530 - httpx - INFO - HTTP Request: POST https://inference.api.nscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 17:10:12,532 - ai_module.nlu - INFO - Successfully processed query. Intent: find_employee
+2025-05-18 17:10:13,366 - httpx - INFO - HTTP Request: GET https://adfvvxoxnrcyqsuausuq.supabase.co/rest/v1/employees?select=name%2Cphone_number&name=ilike.%25%D0%9A%D0%B8%D0%BC+%D0%9C%D0%B0%D1%80%D0%B8%D0%BD%D0%B0+%D0%98%D0%B3%D0%BE%D1%80%D0%B5%D0%B2%D0%BD%D0%B0%25 "HTTP/2 200 OK"
+2025-05-18 17:10:14,189 - aiogram.event - INFO - Update id=887249237 is handled. Duration 5934 ms by bot id=7843707990
+2025-05-18 17:10:56,309 - httpx - INFO - HTTP Request: POST https://inference.api.nscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 17:10:56,311 - ai_module.nlu - INFO - Successfully processed query. Intent: find_employee
+2025-05-18 17:10:57,304 - httpx - INFO - HTTP Request: GET https://adfvvxoxnrcyqsuausuq.supabase.co/rest/v1/employees?select=name%2Cphone_number&name=ilike.%25%D0%9A%D1%80%D1%8B%D0%BB%D0%BE%D0%B2+%D0%94%D0%BC%D0%B8%D1%82%D1%80%D0%B8%D0%B9+%D0%A1%D0%B5%D1%80%D0%B3%D0%B5%D0%B5%D0%B2%D0%B8%D1%87%25 "HTTP/2 200 OK"
+2025-05-18 17:10:57,740 - aiogram.event - INFO - Update id=887249238 is handled. Duration 6207 ms by bot id=7843707990
+2025-05-18 17:15:10,607 - aiogram.dispatcher - INFO - Polling stopped
+2025-05-18 17:15:10,871 - root - INFO - Остановка бота...
+2025-05-18 17:15:10,872 - root - INFO - Сессия бота закрыта.
+2025-05-18 17:15:10,874 - aiogram.dispatcher - INFO - Polling stopped for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 17:15:10,884 - root - INFO - Бот остановлен вручную.
+2025-05-18 17:15:33,084 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 17:15:33,089 - root - INFO - Запуск бота...
+2025-05-18 17:15:33,719 - root - WARNING - ALLOWED_USER_IDS не настроен или пуст. Авторизация по ID отключена.
+2025-05-18 17:15:34,262 - root - INFO - Успешно подключились к Supabase!
+2025-05-18 17:15:34,263 - root - INFO - Регистрация хендлеров...
+2025-05-18 17:15:34,263 - root - INFO - Роутер 'start' зарегистрирован.
+2025-05-18 17:15:34,264 - root - INFO - Роутер 'Помощник' зарегистрирован.
+2025-05-18 17:15:34,264 - root - ERROR - Роутер из bot.handlers.ai_query не найден или не имеет атрибута 'router'.
+2025-05-18 17:15:34,264 - root - INFO - Роутер 'employees_commands' зарегистрирован.
+2025-05-18 17:15:34,265 - root - INFO - Роутер 'nlu_handler' зарегистрирован.
+2025-05-18 17:15:34,265 - root - INFO - Роутер 'ai_intent_handler' зарегистрирован.
+2025-05-18 17:15:35,150 - root - INFO - Начинаем поллинг...
+2025-05-18 17:15:35,151 - aiogram.dispatcher - INFO - Start polling
+2025-05-18 17:15:35,318 - aiogram.dispatcher - INFO - Run polling for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 17:15:54,793 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 17:16:00,464 - httpx - INFO - HTTP Request: POST https://inference.api.nscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 17:16:00,470 - ai_module.nlu - INFO - Successfully processed query. Intent: find_employee
+2025-05-18 17:16:02,070 - httpx - INFO - HTTP Request: GET https://adfvvxoxnrcyqsuausuq.supabase.co/rest/v1/employees?select=%2A&name=ilike.%25%D0%A8%D0%BC%D0%B8%D0%B4%D1%82+%D0%92%D0%B8%D0%BA%D1%82%D0%BE%D1%80+%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2%D0%B8%D1%87%25 "HTTP/2 200 OK"
+2025-05-18 17:16:03,103 - aiogram.event - INFO - Update id=887249239 is handled. Duration 8774 ms by bot id=7843707990
+2025-05-18 17:16:27,492 - httpx - INFO - HTTP Request: POST https://inference.api.nscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 17:16:27,494 - ai_module.nlu - INFO - Successfully processed query. Intent: find_by_position
+2025-05-18 17:16:28,279 - httpx - INFO - HTTP Request: GET https://adfvvxoxnrcyqsuausuq.supabase.co/rest/v1/employees?select=%2A&job_title=ilike.%25%D1%8E%D1%80%D0%B8%D1%81%D1%82%25 "HTTP/2 200 OK"
+2025-05-18 17:16:28,846 - aiogram.event - INFO - Update id=887249240 is handled. Duration 5710 ms by bot id=7843707990
+2025-05-18 17:16:46,658 - aiogram.dispatcher - INFO - Polling stopped
+2025-05-18 17:16:46,915 - root - INFO - Остановка бота...
+2025-05-18 17:16:46,915 - root - INFO - Сессия бота закрыта.
+2025-05-18 17:16:46,916 - aiogram.dispatcher - INFO - Polling stopped for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 17:16:46,918 - root - INFO - Бот остановлен вручную.
+2025-05-18 17:21:13,235 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 17:21:13,242 - root - INFO - Запуск бота...
+2025-05-18 17:21:13,975 - root - WARNING - ALLOWED_USER_IDS не настроен или пуст. Авторизация по ID отключена.
+2025-05-18 17:21:14,493 - root - INFO - Успешно подключились к Supabase!
+2025-05-18 17:21:14,494 - root - INFO - Регистрация хендлеров...
+2025-05-18 17:21:14,494 - root - INFO - Роутер 'start' зарегистрирован.
+2025-05-18 17:21:14,494 - root - INFO - Роутер 'Помощник' зарегистрирован.
+2025-05-18 17:21:14,495 - root - ERROR - Роутер из bot.handlers.ai_query не найден или не имеет атрибута 'router'.
+2025-05-18 17:21:14,495 - root - INFO - Роутер 'employees_commands' зарегистрирован.
+2025-05-18 17:21:14,495 - root - INFO - Роутер 'nlu_handler' зарегистрирован.
+2025-05-18 17:21:14,496 - root - INFO - Роутер 'ai_intent_handler' зарегистрирован.
+2025-05-18 17:21:16,171 - root - INFO - Начинаем поллинг...
+2025-05-18 17:21:16,172 - aiogram.dispatcher - INFO - Start polling
+2025-05-18 17:21:16,460 - aiogram.dispatcher - INFO - Run polling for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 17:21:25,892 - aiogram.event - INFO - Update id=887249241 is handled. Duration 1177 ms by bot id=7843707990
+2025-05-18 17:21:58,989 - aiogram.event - INFO - Update id=887249242 is not handled. Duration 2 ms by bot id=7843707990
+2025-05-18 17:21:58,989 - aiogram.event - ERROR - Cause exception while process update id=887249242 by bot id=7843707990
+TypeError: unsupported operand type(s) for &: 'str' and '_InvertFilter'
+Traceback (most recent call last):
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 56, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        observer=observer, update_type=update_type, event=telegram_event, **data
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 174, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        observer=observer, update_type=update_type, event=telegram_event, **data
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 166, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 113, in trigger
+    result, data = await handler.check(event, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 90, in check
+    check = await event_filter.call(*args, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 44, in call
+    return await asyncio.to_thread(wrapped)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\AppData\Local\Programs\Python\Python313\Lib\asyncio\threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\AppData\Local\Programs\Python\Python313\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\magic_filter\magic.py", line 97, in resolve
+    return self._resolve(value=value)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\magic_filter\magic.py", line 81, in _resolve
+    value = operation.resolve(value=value, initial_value=initial_value)
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\magic_filter\operations\combination.py", line 18, in resolve
+    return self.combinator(value, resolve_if_needed(self.right, initial_value=initial_value))
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: unsupported operand type(s) for &: 'str' and '_InvertFilter'
+2025-05-18 17:22:19,646 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 17:22:24,418 - httpx - INFO - HTTP Request: POST https://inference.api.nscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 17:22:24,424 - ai_module.nlu - ERROR - Failed to parse NLU result as JSON: Expecting value: line 1 column 1 (char 0)
+2025-05-18 17:22:24,624 - aiogram.event - INFO - Update id=887249243 is handled. Duration 5446 ms by bot id=7843707990
+2025-05-18 17:23:17,188 - aiogram.event - INFO - Update id=887249244 is handled. Duration 307 ms by bot id=7843707990
+2025-05-18 17:23:43,174 - aiogram.event - INFO - Update id=887249245 is not handled. Duration 4 ms by bot id=7843707990
+2025-05-18 17:23:43,174 - aiogram.event - ERROR - Cause exception while process update id=887249245 by bot id=7843707990
+TypeError: unsupported operand type(s) for &: 'str' and '_InvertFilter'
+Traceback (most recent call last):
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 56, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        observer=observer, update_type=update_type, event=telegram_event, **data
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 174, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        observer=observer, update_type=update_type, event=telegram_event, **data
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 166, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 113, in trigger
+    result, data = await handler.check(event, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 90, in check
+    check = await event_filter.call(*args, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 44, in call
+    return await asyncio.to_thread(wrapped)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\AppData\Local\Programs\Python\Python313\Lib\asyncio\threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\AppData\Local\Programs\Python\Python313\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\magic_filter\magic.py", line 97, in resolve
+    return self._resolve(value=value)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\magic_filter\magic.py", line 81, in _resolve
+    value = operation.resolve(value=value, initial_value=initial_value)
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\magic_filter\operations\combination.py", line 18, in resolve
+    return self.combinator(value, resolve_if_needed(self.right, initial_value=initial_value))
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: unsupported operand type(s) for &: 'str' and '_InvertFilter'
+2025-05-18 17:23:52,765 - aiogram.event - INFO - Update id=887249246 is not handled. Duration 2 ms by bot id=7843707990
+2025-05-18 17:23:52,768 - aiogram.event - ERROR - Cause exception while process update id=887249246 by bot id=7843707990
+TypeError: unsupported operand type(s) for &: 'str' and '_InvertFilter'
+Traceback (most recent call last):
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 56, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        observer=observer, update_type=update_type, event=telegram_event, **data
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 174, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        observer=observer, update_type=update_type, event=telegram_event, **data
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 166, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 113, in trigger
+    result, data = await handler.check(event, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 90, in check
+    check = await event_filter.call(*args, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 44, in call
+    return await asyncio.to_thread(wrapped)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\AppData\Local\Programs\Python\Python313\Lib\asyncio\threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\AppData\Local\Programs\Python\Python313\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\magic_filter\magic.py", line 97, in resolve
+    return self._resolve(value=value)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\magic_filter\magic.py", line 81, in _resolve
+    value = operation.resolve(value=value, initial_value=initial_value)
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\magic_filter\operations\combination.py", line 18, in resolve
+    return self.combinator(value, resolve_if_needed(self.right, initial_value=initial_value))
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: unsupported operand type(s) for &: 'str' and '_InvertFilter'
+2025-05-18 17:24:01,356 - aiogram.event - INFO - Update id=887249247 is not handled. Duration 2 ms by bot id=7843707990
+2025-05-18 17:24:01,356 - aiogram.event - ERROR - Cause exception while process update id=887249247 by bot id=7843707990
+TypeError: unsupported operand type(s) for &: 'str' and '_InvertFilter'
+Traceback (most recent call last):
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 56, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        observer=observer, update_type=update_type, event=telegram_event, **data
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 174, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        observer=observer, update_type=update_type, event=telegram_event, **data
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 166, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 113, in trigger
+    result, data = await handler.check(event, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 90, in check
+    check = await event_filter.call(*args, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 44, in call
+    return await asyncio.to_thread(wrapped)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\AppData\Local\Programs\Python\Python313\Lib\asyncio\threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\вшьф\AppData\Local\Programs\Python\Python313\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\magic_filter\magic.py", line 97, in resolve
+    return self._resolve(value=value)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\magic_filter\magic.py", line 81, in _resolve
+    value = operation.resolve(value=value, initial_value=initial_value)
+  File "C:\Users\вшьф\veryinterestingbot-2\venv\Lib\site-packages\magic_filter\operations\combination.py", line 18, in resolve
+    return self.combinator(value, resolve_if_needed(self.right, initial_value=initial_value))
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: unsupported operand type(s) for &: 'str' and '_InvertFilter'
+2025-05-18 17:24:17,551 - aiogram.dispatcher - INFO - Polling stopped
+2025-05-18 17:24:17,806 - root - INFO - Остановка бота...
+2025-05-18 17:24:17,807 - root - INFO - Сессия бота закрыта.
+2025-05-18 17:24:17,808 - aiogram.dispatcher - INFO - Polling stopped for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 17:24:17,809 - root - INFO - Бот остановлен вручную.
+2025-05-18 17:29:58,812 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 17:29:58,821 - root - INFO - Запуск бота...
+2025-05-18 17:29:59,359 - root - WARNING - ALLOWED_USER_IDS не настроен или пуст. Авторизация по ID отключена.
+2025-05-18 17:29:59,827 - root - INFO - Успешно подключились к Supabase!
+2025-05-18 17:29:59,828 - root - INFO - Регистрация хендлеров...
+2025-05-18 17:29:59,828 - root - INFO - Роутер 'start' зарегистрирован.
+2025-05-18 17:29:59,829 - root - INFO - Роутер 'Помощник' зарегистрирован.
+2025-05-18 17:29:59,829 - root - ERROR - Роутер из bot.handlers.ai_query не найден или не имеет атрибута 'router'.
+2025-05-18 17:29:59,829 - root - INFO - Роутер 'employees_commands' зарегистрирован.
+2025-05-18 17:29:59,830 - root - INFO - Роутер 'nlu_handler' зарегистрирован.
+2025-05-18 17:29:59,830 - root - INFO - Роутер 'ai_intent_handler' зарегистрирован.
+2025-05-18 17:30:01,177 - root - INFO - Начинаем поллинг...
+2025-05-18 17:30:01,178 - aiogram.dispatcher - INFO - Start polling
+2025-05-18 17:30:01,404 - aiogram.dispatcher - INFO - Run polling for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 17:30:09,436 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 17:30:12,456 - httpx - INFO - HTTP Request: POST https://inference.api.nscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 17:30:12,463 - ai_module.nlu - ERROR - Error processing query: 'NoneType' object has no attribute 'strip'
+2025-05-18 17:30:13,961 - aiogram.event - INFO - Update id=887249248 is handled. Duration 5015 ms by bot id=7843707990
+2025-05-18 17:31:37,460 - aiogram.dispatcher - INFO - Polling stopped
+2025-05-18 17:31:37,726 - root - INFO - Остановка бота...
+2025-05-18 17:31:37,730 - root - INFO - Сессия бота закрыта.
+2025-05-18 17:31:37,731 - aiogram.dispatcher - INFO - Polling stopped for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 17:31:37,735 - root - INFO - Бот остановлен вручную.
+2025-05-18 17:31:56,577 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 17:31:56,582 - root - INFO - Запуск бота...
+2025-05-18 17:31:57,072 - root - WARNING - ALLOWED_USER_IDS не настроен или пуст. Авторизация по ID отключена.
+2025-05-18 17:31:57,561 - root - INFO - Успешно подключились к Supabase!
+2025-05-18 17:31:57,562 - root - INFO - Регистрация хендлеров...
+2025-05-18 17:31:57,562 - root - INFO - Роутер 'start' зарегистрирован.
+2025-05-18 17:31:57,562 - root - INFO - Роутер 'Помощник' зарегистрирован.
+2025-05-18 17:31:57,563 - root - ERROR - Роутер из bot.handlers.ai_query не найден или не имеет атрибута 'router'.
+2025-05-18 17:31:57,563 - root - INFO - Роутер 'employees_commands' зарегистрирован.
+2025-05-18 17:31:57,563 - root - INFO - Роутер 'nlu_handler' зарегистрирован.
+2025-05-18 17:31:57,564 - root - INFO - Роутер 'ai_intent_handler' зарегистрирован.
+2025-05-18 17:31:59,301 - root - INFO - Начинаем поллинг...
+2025-05-18 17:31:59,302 - aiogram.dispatcher - INFO - Start polling
+2025-05-18 17:31:59,637 - aiogram.dispatcher - INFO - Run polling for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 17:32:10,842 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 17:32:13,042 - httpx - INFO - HTTP Request: POST https://inference.api.nscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 17:32:13,048 - ai_module.nlu - ERROR - Error processing query: 'NoneType' object has no attribute 'strip'
+2025-05-18 17:32:14,565 - aiogram.event - INFO - Update id=887249249 is handled. Duration 4226 ms by bot id=7843707990
+2025-05-18 17:33:34,662 - aiogram.dispatcher - INFO - Polling stopped
+2025-05-18 17:33:34,921 - root - INFO - Остановка бота...
+2025-05-18 17:33:34,921 - root - INFO - Сессия бота закрыта.
+2025-05-18 17:33:34,922 - aiogram.dispatcher - INFO - Polling stopped for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 17:33:34,924 - root - INFO - Бот остановлен вручную.
+2025-05-18 17:47:10,991 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 17:47:10,998 - root - INFO - Запуск бота...
+2025-05-18 17:47:11,524 - root - WARNING - ALLOWED_USER_IDS не настроен или пуст. Авторизация по ID отключена.
+2025-05-18 17:47:11,998 - root - INFO - Успешно подключились к Supabase!
+2025-05-18 17:47:11,998 - root - INFO - Регистрация хендлеров...
+2025-05-18 17:47:11,999 - root - INFO - Роутер 'start' зарегистрирован.
+2025-05-18 17:47:12,000 - root - INFO - Роутер 'Помощник' зарегистрирован.
+2025-05-18 17:47:12,000 - root - ERROR - Роутер из bot.handlers.ai_query не найден или не имеет атрибута 'router'.
+2025-05-18 17:47:12,001 - root - INFO - Роутер 'employees_commands' зарегистрирован.
+2025-05-18 17:47:12,001 - root - INFO - Роутер 'nlu_handler' зарегистрирован.
+2025-05-18 17:47:12,001 - root - INFO - Роутер 'ai_intent_handler' зарегистрирован.
+2025-05-18 17:47:14,294 - root - INFO - Начинаем поллинг...
+2025-05-18 17:47:14,295 - aiogram.dispatcher - INFO - Start polling
+2025-05-18 17:47:14,691 - aiogram.dispatcher - INFO - Run polling for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 17:47:25,990 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 17:47:31,616 - httpx - INFO - HTTP Request: POST https://inference.api.nscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 17:47:31,622 - ai_module.nlu - INFO - Successfully processed query. Intent: find_by_position
+2025-05-18 17:47:33,864 - httpx - INFO - HTTP Request: GET https://adfvvxoxnrcyqsuausuq.supabase.co/rest/v1/employees?select=%2A&job_title=ilike.%25%D1%8E%D1%80%D0%B8%D1%81%D1%82%25 "HTTP/2 200 OK"
+2025-05-18 17:47:35,597 - aiogram.event - INFO - Update id=887249251 is handled. Duration 10082 ms by bot id=7843707990
+2025-05-18 17:49:41,533 - aiogram.dispatcher - INFO - Polling stopped
+2025-05-18 17:49:41,791 - root - INFO - Остановка бота...
+2025-05-18 17:49:41,801 - root - INFO - Сессия бота закрыта.
+2025-05-18 17:49:41,802 - aiogram.dispatcher - INFO - Polling stopped for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 17:49:41,870 - root - INFO - Бот остановлен вручную.
+2025-05-18 17:49:57,011 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 17:49:57,015 - root - INFO - Запуск бота...
+2025-05-18 17:49:57,488 - root - WARNING - ALLOWED_USER_IDS не настроен или пуст. Авторизация по ID отключена.
+2025-05-18 17:49:58,008 - root - INFO - Успешно подключились к Supabase!
+2025-05-18 17:49:58,008 - root - INFO - Регистрация хендлеров...
+2025-05-18 17:49:58,008 - root - INFO - Роутер 'start' зарегистрирован.
+2025-05-18 17:49:58,009 - root - INFO - Роутер 'Помощник' зарегистрирован.
+2025-05-18 17:49:58,010 - root - ERROR - Роутер из bot.handlers.ai_query не найден или не имеет атрибута 'router'.
+2025-05-18 17:49:58,011 - root - INFO - Роутер 'employees_commands' зарегистрирован.
+2025-05-18 17:49:58,011 - root - INFO - Роутер 'nlu_handler' зарегистрирован.
+2025-05-18 17:49:58,012 - root - INFO - Роутер 'ai_intent_handler' зарегистрирован.
+2025-05-18 17:49:59,387 - root - INFO - Начинаем поллинг...
+2025-05-18 17:49:59,388 - aiogram.dispatcher - INFO - Start polling
+2025-05-18 17:49:59,675 - aiogram.dispatcher - INFO - Run polling for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 17:50:12,084 - ai_module.nlu - INFO - Successfully initialized OpenAI client
+2025-05-18 17:50:17,436 - httpx - INFO - HTTP Request: POST https://inference.api.nscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 17:50:17,442 - ai_module.nlu - INFO - Successfully processed query. Intent: find_by_position
+2025-05-18 17:50:19,386 - httpx - INFO - HTTP Request: GET https://adfvvxoxnrcyqsuausuq.supabase.co/rest/v1/employees?select=%2A&job_title=ilike.%25%D1%8E%D1%80%D0%B8%D1%81%D1%82%25 "HTTP/2 200 OK"
+2025-05-18 17:50:20,754 - aiogram.event - INFO - Update id=887249252 is handled. Duration 9144 ms by bot id=7843707990
+2025-05-18 17:52:41,448 - aiogram.dispatcher - INFO - Polling stopped
+2025-05-18 17:52:41,714 - root - INFO - Остановка бота...
+2025-05-18 17:52:41,715 - root - INFO - Сессия бота закрыта.
+2025-05-18 17:52:41,716 - aiogram.dispatcher - INFO - Polling stopped for bot @efficientlycommunication_bot id=7843707990 - 'Бот для коммуникации | Очень Интересно'
+2025-05-18 17:52:41,718 - root - INFO - Бот остановлен вручную.
