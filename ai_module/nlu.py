@@ -1,49 +1,98 @@
-# ai_module/nlu.py
-
 import requests
 import json
-from typing import Optional
-from bot.config import settings
+import asyncio
+from bot.config import app_settings  # Предполагается, что у вас есть этот файл
 
-GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions "
+# Получаем API-ключ из конфигурации
+API_KEY = app_settings.AI_API_KEY
+MODEL = "deepseek/deepseek-r1"  # Или другая модель на ваш выбор
 
-def get_llama3_response(user_message: str) -> Optional[str]:
-    """Отправляет запрос к Llama3 через Groq и возвращает ответ"""
+
+async def chat_with_system_prompt(user_message: str, system_prompt: str) -> str | None:
+    """
+    Отправляет асинхронный запрос в OpenRouter с системным промптом и возвращает ответ.
+
+    Args:
+        user_message: Сообщение пользователя (str).
+        system_prompt: Системный промпт для настройки поведения ИИ (str).
+
+    Returns:
+        Ответ от OpenRouter (str) в случае успеха, None в случае ошибки.
+    """
     headers = {
+        "Authorization": f"Bearer {API_KEY}",
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {Settings.OPENAPI_API_KEY}"
     }
-
-    data = {
-        "model": "llama3-8b-8192",
-        "messages": [
-            {"role": "system", "content": "Ты помощник, который отвечает только на русском языке. Не обсуждай политику, религию, споры и провокационные темы. Отвечай кратко, понятно и по сути, без лишних рассуждений."},
-            {"role": "user", "content": user_input}
-        ]
+    messages = [
+        {"role": "system", "content": system_prompt},  # Системный промпт
+        {"role": "user", "content": user_message},  # Сообщение пользователя
+    ]
+    payload = {
+        "model": MODEL,
+        "messages": messages,
+        "stream": False,
     }
 
     try:
-        response = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=data)
-        reply =  response.json()["choices"][0]["message"]["content"]
-        await message.answer(reply)
+        loop = asyncio.get_event_loop()
+        response = await loop.run_in_executor(
+            None,  # Используем ThreadPoolExecutor по умолчанию для выполнения блокирующего вызова
+            lambda: requests.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers=headers,
+                json=payload,
+            ),
+        )
+        response.raise_for_status()  # Вызываем исключение для статус-кодов 4xx и 5xx
 
+        response_json = response.json()
+        if response_json and response_json["choices"]:
+            content = response_json["choices"][0]["message"]["content"]
+            return content.replace("<think>", "").replace("</think>", "").strip()
+        else:
+            print("Предупреждение: OpenRouter вернул пустой ответ.")
+            return None  # Возвращаем None при пустом ответе
+    except requests.exceptions.RequestException as e:
+        print(f"Ошибка при запросе к OpenRouter: {e}")
+        return None  # Возвращаем None при ошибке запроса
+    except json.JSONDecodeError:
+        print("Ошибка при обработке ответа: Некорректный JSON от OpenRouter")
+        return None  # Возвращаем None при ошибке JSON
     except Exception as e:
-        print(f"Ошибка {e}")
-        await message.answer("Попробуйте ещё раз.")
+        print(f"Непредвиденная ошибка: {e}")
+        return None  # Возвращаем None при любой другой ошибке
 
-# ✅ Делаем алиас, чтобы можно было импортировать как get_model_response
-get_model_response = get_llama3_response  # ✅ Это строка решает проблему
+async def process_user_query(user_query: str, system_prompt: str) -> str | None:
+    """
+    Отправляет запрос пользователя в OpenRouter с системным промптом и возвращает ответ.
+
+    Args:
+        user_query: Запрос пользователя (str).
+        system_prompt: Системный промпт для настройки поведения ИИ (str).
+
+    Returns:
+        Ответ от OpenRouter (str) в случае успеха, None в случае ошибки.
+    """
+    response = await chat_with_system_prompt(user_query, system_prompt)
+    return response
 
 
-def parse_model_response(text_response: str):
-    """Парсим JSON-ответ от модели"""
-    if not text_response:
-        print("Получен пустой ответ от NLU")
-        return None
 
-    try:
-        return json.loads(text_response)
-    except json.JSONDecodeError as e:
-        print(f"[Ошибка парсинга] JSON-ошибка: {str(e)}")
-        print(f"Полученный текст: {text_response}")
-        return None
+async def main():
+    """
+    Пример использования функции process_user_query.
+    """
+    user_query = "Привет, OpenRouter! Как дела?"
+    system_prompt = "Отвечай как дружелюбный ассистент."
+
+    response = await process_user_query(user_query, system_prompt)
+    if response:
+        print("Ответ ИИ:")
+        print(response)
+    else:
+        print("Произошла ошибка при обработке запроса пользователя.")
+
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

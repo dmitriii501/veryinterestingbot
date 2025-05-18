@@ -1,5 +1,5 @@
 import logging
-from cgitb import handler
+#from cgitb import handler
 from typing import Callable, Dict, Any, Awaitable
 
 from aiogram import BaseMiddleware

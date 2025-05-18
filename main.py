@@ -1,7 +1,5 @@
 # main.py
 
-#import ai_module.nlu
-
 import asyncio
 import logging
 
@@ -15,12 +13,13 @@ from bot.config import app_settings
 
 from bot.handlers import start
 from bot.handlers import help as help_command
-from bot.handlers import ai_query as ai_query_handler
+from bot.handlers import ai_query as ai_query_handler  # Переименовано для ясности
 from bot.handlers import employees_handler
+from bot.handlers import nlu_handler # Импортируем новый роутер
 
 from bot.middlewares.auth import AuthMiddleware
 
-async  def main():
+async def main():
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(levelname)s - %(name)s - %(module)s.%(funcName)s: %(message)s",
@@ -33,13 +32,9 @@ async  def main():
     dp = Dispatcher(storage=storage)
 
     if app_settings.ALLOWED_USER_IDS:
-
         logging.info(f"Авторизация по ID включена. Разрешенные ID: {app_settings.ALLOWED_USER_IDS}")
-
         dp.update.outer_middleware.register(AuthMiddleware(allowed_ids=app_settings.ALLOWED_USER_IDS))
-
     else:
-
         logging.warning("ALLOWED_USER_IDS не настроен или пуст. Авторизация по ID отключена.")
 
     try:
@@ -54,7 +49,6 @@ async  def main():
     except Exception as e:
         logging.error(f"Ошибка подключения к Supabase: {e}", exc_info=True)
         bot.supabase_client = None
-
 
     logging.info("Регистрация хендлеров...")
     if hasattr(start, 'router'):
@@ -81,6 +75,14 @@ async  def main():
     else:
         logging.error("Роутер из bot.handlers.employees_handler не найден или не имеет атрибута 'router'.")
 
+    # Регистрируем роутер для обработки NLU запросов
+    if hasattr(nlu_handler, 'router'):
+        dp.include_router(nlu_handler.router)
+        logging.info(f"Роутер '{nlu_handler.router.name or 'nlu_handler'}' зарегистрирован.")
+    else:
+        logging.error("Роутер из bot.handlers.nlu_handler не найден или не имеет атрибута 'router'.") #ОШИБКА
+
+
     await bot.delete_webhook(drop_pending_updates=True)
     logging.info("Начинаем поллинг...")
 
@@ -92,14 +94,14 @@ async  def main():
         logging.info("Сессия бота закрыта.")
 
 
-user_message = "Кто завтра свободен в отделе маркетинга?"
-
-# Получаем ответ от AI-модуля
+#user_message = "Кто завтра свободен в отделе маркетинга?"
+#
+## Получаем ответ от AI-модуля
 #text_response = ai_module.nlu.get_model_response(user_message)
-
-# Парсим JSON
+#
+## Парсим JSON
 #result = ai_module.nlu.parse_model_response(text_response)
-
+#
 #print("Результат анализа запроса:")
 #print(result)
 

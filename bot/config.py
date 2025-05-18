@@ -10,6 +10,7 @@ class Settings(BaseSettings):
 
     ALLOWED_USER_IDS: str = Field("", env='ALLOWED_USER_IDS')
 
+    AI_API_KEY: str = Field(..., env = "AI_API_KEY")
 
     SUPABASE_URL: str = Field(..., env = "SUPABASE_URL")
     SUPABASE_KEY: str = Field(..., env = "SUPABASE_KEY")
