@@ -73,7 +73,16 @@ class NLUProcessor:
             Dict containing parsed and validated NLU result or None if invalid
         """
         try:
-            data = json.loads(result)
+            # Remove any potential non-JSON content
+            json_start = result.find('{')
+            json_end = result.rfind('}')
+            
+            if json_start == -1 or json_end == -1:
+                logger.error("No valid JSON object found in response")
+                return None
+                
+            json_str = result[json_start:json_end + 1]
+            data = json.loads(json_str)
             
             # Validate required fields
             if not isinstance(data, dict):
@@ -93,10 +102,22 @@ class NLUProcessor:
                 logger.error("'entities' is not a dictionary")
                 return None
                 
+            # Validate intent values
+            valid_intents = {
+                "find_employee", "find_by_position", "find_by_department",
+                "event_info", "birthday_info", "task_info", "availability",
+                "lunch_game_invite", "general_question", "unknown"
+            }
+            
+            if data["intent"] not in valid_intents:
+                logger.error(f"Invalid intent value: {data['intent']}")
+                return None
+                
             return data
             
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse NLU result as JSON: {e}")
+            logger.debug(f"Raw result: {result}")
             return None
         except Exception as e:
             logger.error(f"Unexpected error validating NLU result: {e}")
@@ -112,7 +133,8 @@ class NLUProcessor:
                 self.client.chat.completions.create,
                 model=self.model,
                 messages=messages,
-                temperature=0.1  # Low temperature for more consistent results
+                temperature=0.1,  # Low temperature for more consistent results
+                response_format={"type": "json_object"}  # Ensure JSON response
             )
             return response
         except Exception as e:
