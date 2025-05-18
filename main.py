@@ -6,6 +6,7 @@ from datetime import datetime
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.enums import ParseMode
+from aiogram.client.default import DefaultBotProperties
 
 from supabase import create_client, Client
 
@@ -97,7 +98,10 @@ async def main():
 
     # Инициализация бота и диспетчера
     storage = MemoryStorage()
-    bot = Bot(token=app_settings.BOT_TOKEN.get_secret_value(), parse_mode=ParseMode.HTML)
+    bot = Bot(
+        token=app_settings.BOT_TOKEN.get_secret_value(),
+        default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+    )
     dp = Dispatcher(storage=storage)
 
     # Настройка авторизации
