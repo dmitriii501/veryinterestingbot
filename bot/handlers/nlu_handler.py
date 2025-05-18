@@ -6,16 +6,9 @@ import re
 import logging
 from typing import Optional, List, Dict, Any
 from datetime import datetime
-
-# Предполагается, что process_user_query находится в ai_module/nlu.py
-from ai_module.nlu import process_user_query  # Импортируем функцию process_user_query
-#from bot.keyboards.inline import *
-#from bot.utils.utils import *
+from ai_module.nlu import process_user_query
 
 router = Router(name="nlu_handler")
-#dp = Dispatcher(bot) #Удаляем Bot из инициализации
-#Предполагается, что объект bot уже создан и передан в этот модуль.
-#Если это не так, вам нужно будет импортировать его и использовать здесь.
 
 def escape_markdown_v2(text: str) -> str:
     """Escape MarkdownV2 special characters."""
