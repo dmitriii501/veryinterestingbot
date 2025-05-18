@@ -73,16 +73,7 @@ class NLUProcessor:
             Dict containing parsed and validated NLU result or None if invalid
         """
         try:
-            # Remove any potential non-JSON content
-            json_start = result.find('{')
-            json_end = result.rfind('}')
-            
-            if json_start == -1 or json_end == -1:
-                logger.error("No valid JSON object found in response")
-                return None
-                
-            json_str = result[json_start:json_end + 1]
-            data = json.loads(json_str)
+            data = json.loads(result)
             
             # Validate required fields
             if not isinstance(data, dict):
@@ -102,22 +93,10 @@ class NLUProcessor:
                 logger.error("'entities' is not a dictionary")
                 return None
                 
-            # Validate intent values
-            valid_intents = {
-                "find_employee", "find_by_position", "find_by_department",
-                "event_info", "birthday_info", "task_info", "availability",
-                "lunch_game_invite", "general_question", "unknown"
-            }
-            
-            if data["intent"] not in valid_intents:
-                logger.error(f"Invalid intent value: {data['intent']}")
-                return None
-                
             return data
             
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse NLU result as JSON: {e}")
-            logger.debug(f"Raw result: {result}")
             return None
         except Exception as e:
             logger.error(f"Unexpected error validating NLU result: {e}")
@@ -133,8 +112,7 @@ class NLUProcessor:
                 self.client.chat.completions.create,
                 model=self.model,
                 messages=messages,
-                temperature=0.1,  # Low temperature for more consistent results
-                response_format={"type": "json_object"}  # Ensure JSON response
+                temperature=0.1  # Low temperature for more consistent results
             )
             return response
         except Exception as e:
@@ -144,11 +122,11 @@ class NLUProcessor:
     async def process_query(self, user_query: str) -> Optional[Dict[str, Any]]:
         """
         Process a user query through the NLU pipeline.
-        
-        Args:
+
+    Args:
             user_query: The user's input text
-            
-        Returns:
+
+    Returns:
             Dict containing intent and entities or None if processing failed
         """
         if not user_query.strip():
@@ -156,7 +134,7 @@ class NLUProcessor:
             return None
 
         try:
-            messages = [
+    messages = [
                 {"role": "system", "content": self._get_system_prompt()},
                 {"role": "user", "content": user_query},
             ]
@@ -179,7 +157,7 @@ class NLUProcessor:
             
             return None
 
-        except Exception as e:
+    except Exception as e:
             logger.error(f"Error processing query: {e}")
             return None
 
@@ -198,19 +176,15 @@ def get_nlu_processor() -> NLUProcessor:
 async def process_user_query(user_query: str, system_prompt: str = None) -> Optional[Dict[str, Any]]:
     """
     Process a user query through the NLU pipeline.
-    
+
     Args:
         user_query: The user's input text
         system_prompt: Optional custom system prompt
-        
+
     Returns:
         Dict containing intent and entities or None if processing failed
     """
     try:
-        if user_query is None:
-            logger.error("Received None as user_query")
-            return None
-            
         processor = get_nlu_processor()
         return await processor.process_query(user_query)
     except Exception as e:
