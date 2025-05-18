@@ -4,8 +4,8 @@ import asyncio
 from bot.config import app_settings  # Предполагается, что у вас есть этот файл
 
 # Получаем API-ключ из конфигурации
-API_KEY = app_settings.AI_API_KEY
-MODEL = "deepseek/deepseek-r1"  # Или другая модель на ваш выбор
+API_KEY = "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"
+MODEL = "deepseek/deepseek-prover-v2:free"  # Или другая модель на ваш выбор
 
 
 async def chat_with_system_prompt(user_message: str, system_prompt: str) -> str | None:
