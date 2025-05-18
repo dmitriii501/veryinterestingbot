@@ -97,7 +97,7 @@ async def main():
 
     # Инициализация бота и диспетчера
     storage = MemoryStorage()
-    bot = Bot(token=app_settings.BOT_TOKEN, parse_mode=ParseMode.HTML)
+    bot = Bot(token=app_settings.BOT_TOKEN.get_secret_value(), parse_mode=ParseMode.HTML)
     dp = Dispatcher(storage=storage)
 
     # Настройка авторизации
