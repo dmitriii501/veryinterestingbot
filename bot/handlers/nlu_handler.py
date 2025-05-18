@@ -104,6 +104,12 @@ async def nlu_command_handler(message: types.Message):
         return
 
     user_query = command_parts[1]
+    if not user_query:
+        await message.answer(
+            "❌ Пожалуйста, введите текст запроса после команды /nlu"
+        )
+        return
+        
     result = await process_user_query(user_query)
     
     if result:

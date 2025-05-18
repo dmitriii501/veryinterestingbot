@@ -207,6 +207,10 @@ async def process_user_query(user_query: str, system_prompt: str = None) -> Opti
         Dict containing intent and entities or None if processing failed
     """
     try:
+        if user_query is None:
+            logger.error("Received None as user_query")
+            return None
+            
         processor = get_nlu_processor()
         return await processor.process_query(user_query)
     except Exception as e:
