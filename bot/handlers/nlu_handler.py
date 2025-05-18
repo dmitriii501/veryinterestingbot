@@ -141,9 +141,8 @@ async def nlu_command_handler(message: types.Message):
                         response.append(emp_info)
                     
                     await message.answer("\n".join(response))
-                else:
-                    await message.answer("❌ Извините, я не смог правильно определить тип запроса.")
-                
+            else:
+                await message.answer("❌ Извините, я не смог правильно определить тип запроса.")
         except Exception as e:
             logging.error(f"Error processing response: {e}")
             await message.answer(
