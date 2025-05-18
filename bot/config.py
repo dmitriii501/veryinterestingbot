@@ -17,6 +17,7 @@ class Settings(BaseSettings):
 
     # AI settings
     DASHSCOPE_API_KEY: Optional[str] = None
+    AI_API_KEY: Optional[str] = None  # OpenRouter API key
 
     @property
     def ALLOWED_USER_IDS(self) -> Set[int]:

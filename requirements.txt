@@ -10,6 +10,8 @@ supabase>=2.0.0
 
 # AI и обработка текста
 dashscope>=1.12.0
+requests>=2.31.0
+aiohttp>=3.9.0
 
 # Утилиты
 python-dateutil>=2.8.2
