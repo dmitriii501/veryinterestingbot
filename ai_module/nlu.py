@@ -9,6 +9,7 @@ MODEL = "google/gemma-3-1b-it:free"  # Можно заменить на нужн
 
 print("[DEBUG] AI_API_KEY из .env:", os.getenv("AI_API_KEY"))
 print("[DEBUG] API_KEY из app_settings:", API_KEY)
+print(repr(os.getenv("AI_API_KEY")))
 
 
 def log_openrouter_response(response):
