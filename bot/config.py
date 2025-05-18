@@ -2,14 +2,14 @@ import os
 from dotenv import load_dotenv
 from pydantic import Field
 from pydantic_settings import BaseSettings
-from typing import List, Optional
+from typing import List, Optional, Set
 
 load_dotenv()
 
 class Settings(BaseSettings):
     # Telegram Bot settings
     BOT_TOKEN: str
-    ALLOWED_USER_IDS: Optional[List[int]] = None
+    ALLOWED_USER_IDS_STR: Optional[str] = Field(None, env='ALLOWED_USER_IDS')
 
     # Supabase settings
     SUPABASE_URL: str
@@ -19,20 +19,28 @@ class Settings(BaseSettings):
     DASHSCOPE_API_KEY: Optional[str] = None
 
     @property
-    def ALLOWED_USER_IDS(self) -> set[int]:
-        ids_str = self.allowed_user_ids_str.strip()
-        if not ids_str:
+    def ALLOWED_USER_IDS(self) -> Set[int]:
+        """
+        Преобразует строку с ID пользователей в множество целых чисел.
+        Формат строки: "123456789, 987654321"
+        """
+        if not self.ALLOWED_USER_IDS_STR:
             return set()
+        
         try:
-            return {int(uid.strip()) for uid in ids_str.split(',') if uid.strip().isdigit()}
-        except ValueError:
-            print(
-                f"ОШИБКА: Не удалось обработать ALLOWED_USER_IDS: '{ids_str}'. Убедитесь, что это список чисел, разделенных запятыми.")
+            return {
+                int(uid.strip())
+                for uid in self.ALLOWED_USER_IDS_STR.split(',')
+                if uid.strip().isdigit()
+            }
+        except ValueError as e:
+            print(f"ОШИБКА: Не удалось обработать ALLOWED_USER_IDS: '{self.ALLOWED_USER_IDS_STR}'. {str(e)}")
             return set()
 
     class Config:
         env_file = ".env"
         env_file_encoding = 'utf-8'
         extra = 'ignore'
+
 
 app_settings = Settings()

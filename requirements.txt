@@ -1,5 +1,16 @@
-python-dotenv
-pydantic
-pydantic-settings
-dashscope
+# Основные зависимости
 python-telegram-bot==20.0
+aiogram>=3.0.0
+python-dotenv>=1.0.0
+
+# Работа с данными
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+supabase>=2.0.0
+
+# AI и обработка текста
+dashscope>=1.12.0
+
+# Утилиты
+python-dateutil>=2.8.2
+pytz>=2024.1
