@@ -119,14 +119,14 @@ class NLUProcessor:
             logger.error(f"Error calling AI API: {e}")
             raise
 
-    async def process_query(self, user_query: str) -> Optional[Dict[str, Any]]:
+        async def process_query(self, user_query: str) -> Optional[Dict[str, Any]]:
         """
         Process a user query through the NLU pipeline.
 
-    Args:
+        Args:
             user_query: The user's input text
 
-    Returns:
+        Returns:
             Dict containing intent and entities or None if processing failed
         """
         if not user_query.strip():
@@ -134,13 +134,12 @@ class NLUProcessor:
             return None
 
         try:
-    messages = [
+            messages = [
                 {"role": "system", "content": self._get_system_prompt()},
-                {"role": "user", "content": user_query},
+                {"role": "user", "content": user_query}
             ]
 
             logger.debug(f"Sending request to AI model with query: {user_query}")
-            
             response = await self._call_ai_api(messages)
 
             if not response or not response.choices or not response.choices[0].message:
@@ -157,7 +156,7 @@ class NLUProcessor:
             
             return None
 
-    except Exception as e:
+        except Exception as e:
             logger.error(f"Error processing query: {e}")
             return None
 
