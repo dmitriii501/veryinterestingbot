@@ -4,6 +4,7 @@ from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings
 from typing import List, Optional, Set
 import logging
+import logging.config
 
 # Load environment variables
 load_dotenv()
