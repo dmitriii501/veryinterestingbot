@@ -1,9 +1,25 @@
 import json
 import dashscope
+import os
 from bot.config import app_settings
 
 # Получаем API-ключ из конфигурации
 API_KEY = app_settings.DASHSCOPE_API_KEY
+
+print("[DEBUG] DASHSCOPE_API_KEY из .env:", os.getenv("DASHSCOPE_API_KEY"))
+print("[DEBUG] API_KEY из app_settings:", API_KEY)
+
+
+def log_dashscope_response(response):
+    print("[DEBUG] DashScope response object:", response)
+    if hasattr(response, 'status_code'):
+        print("[DEBUG] status_code:", response.status_code)
+    if hasattr(response, 'output'):
+        print("[DEBUG] output:", response.output)
+    if hasattr(response, 'code'):
+        print("[DEBUG] code:", getattr(response, 'code', None))
+    if hasattr(response, 'message'):
+        print("[DEBUG] message:", getattr(response, 'message', None))
 
 
 async def process_user_query(user_query: str, system_prompt: str) -> str | None:
@@ -27,6 +43,9 @@ async def process_user_query(user_query: str, system_prompt: str) -> str | None:
             {"role": "user", "content": user_query}
         ]
 
+        print("[DEBUG] Отправляемый messages:", messages)
+        print("[DEBUG] Используемый API_KEY:", API_KEY)
+
         response = dashscope.Generation.call(
             model='qwen-max',
             messages=messages,
@@ -35,11 +54,14 @@ async def process_user_query(user_query: str, system_prompt: str) -> str | None:
             max_tokens=1000,
             temperature=0.1
         )
+
+        log_dashscope_response(response)
         
         if response.status_code == 200:
+            print("[DEBUG] Успешный ответ DashScope")
             return response.output.choices[0].message.content.strip()
         else:
-            print(f"Ошибка DashScope API: {response.code} - {response.message}")
+            print(f"Ошибка DashScope API: {getattr(response, 'code', None)} - {getattr(response, 'message', None)}")
             return None
 
     except Exception as e:
