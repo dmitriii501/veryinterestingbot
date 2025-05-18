@@ -4,11 +4,13 @@ import asyncio
 from bot.config import app_settings  # Предполагается, что у вас есть этот файл
 
 # Получаем API-ключ из конфигурации
-API_KEY = "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"
-MODEL = "deepseek/deepseek-prover-v2:free"  # Или другая модель на ваш выбор
+API_KEY = app_settings.AI_API_KEY
+MODEL = "google/gemma-3-1b-it:free"  # Или другая модель на ваш выбор
 
 
-async def chat_with_system_prompt(user_message: str, system_prompt: str) -> str | None:
+async def chat_with_system_prompt(
+    user_message: str, system_prompt: str
+) -> str | None:
     """
     Отправляет асинхронный запрос в OpenRouter с системным промптом и возвращает ответ.
 
@@ -48,7 +50,9 @@ async def chat_with_system_prompt(user_message: str, system_prompt: str) -> str 
         response_json = response.json()
         if response_json and response_json["choices"]:
             content = response_json["choices"][0]["message"]["content"]
-            return content.replace("<think>", "").replace("</think>", "").strip()
+            return content.replace("<think>", "").replace(
+                "</think>", ""
+            ).strip()
         else:
             print("Предупреждение: OpenRouter вернул пустой ответ.")
             return None  # Возвращаем None при пустом ответе
@@ -62,7 +66,10 @@ async def chat_with_system_prompt(user_message: str, system_prompt: str) -> str 
         print(f"Непредвиденная ошибка: {e}")
         return None  # Возвращаем None при любой другой ошибке
 
-async def process_user_query(user_query: str, system_prompt: str) -> str | None:
+
+async def process_user_query(
+    user_query: str, system_prompt: str
+) -> str | None:
     """
     Отправляет запрос пользователя в OpenRouter с системным промптом и возвращает ответ.
 
@@ -77,13 +84,46 @@ async def process_user_query(user_query: str, system_prompt: str) -> str | None:
     return response
 
 
-
 async def main():
     """
     Пример использования функции process_user_query.
     """
-    user_query = "Привет, OpenRouter! Как дела?"
-    system_prompt = "Отвечай как дружелюбный ассистент."
+    user_query = "Найти сотрудников из отдела продаж 05.03.2024 и 06.03.2024"
+    system_prompt = (
+        "Ты — AI-парсер запросов в корпоративном приложении. "
+        "Пользователь пишет запрос в свободной форме. Твоя задача — извлечь только intent (намерение) "
+        "и entities (сущности), которые явно указаны в тексте. Не отвечай на вопрос, не выдумывай данные, "
+        "не интерпретируй неявные фразы. Дата должна быть только в формате дд.мм.гггг. "
+        "Если дата указана иначе (например, 'завтра'), не добавляй сущность date. "
+        "Если сущность не указана — не включай её в JSON. "
+        "Ответ строго в формате JSON.\n\n"
+        "Возможные интенты:\n"
+        "- find_employee: Поиск сотрудника\n"
+        "- event_info: Инфо о мероприятиях\n"
+        "- birthday_info: Дни рождения\n"
+        "- task_info: Задачи\n"
+        "- availability: Свободен ли сотрудник\n"
+        "- lunch_game_invite: Найти коллег по интересам\n"
+        "- general_question: Общий вопрос\n"
+        "- unknown: Неопределено\n\n"
+        "Возможные сущности:\n"
+        "- employee_name: имя сотрудника\n"
+        "- department: отдел\n"
+        "- project: проект\n"
+        "- date: дата (только в формате дд.мм.гггг)\n"
+        "- event_type: тип события\n"
+        "- task_keyword: ключ задачи\n"
+        "- location: место\n\n"
+        'Пример запроса: "Кто из разработки работает 20.05.2025?"\n'
+        "Ожидаемый ответ:\n\n"
+        '{\n'
+        '  "intent": "availability",\n'
+        '  "entities": {\n'
+        '    "department": "разработка",\n'
+        '    "date": "20.05.2025"\n'
+        "  }\n"
+        "}"
+    )
 
     response = await process_user_query(user_query, system_prompt)
     if response:
@@ -91,7 +131,6 @@ async def main():
         print(response)
     else:
         print("Произошла ошибка при обработке запроса пользователя.")
-
 
 
 if __name__ == "__main__":
